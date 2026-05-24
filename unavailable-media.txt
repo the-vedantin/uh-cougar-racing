@@ -1,0 +1,9 @@
+The following media URLs are unavailable on the live Wix site too. They return no usable image in-browser and direct Wix media requests return 403.
+
+Sub-Teams / Powertrain image:
+https://static.wixstatic.com/media/d9e30c_1bc6caae886e48ccab474f35e9a6f131~mv2.jpg/v1/fill/w_930,h_470,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/d9e30c_1bc6caae886e48ccab474f35e9a6f131~mv2.jpg
+
+Join Us / service card images:
+https://static.wixstatic.com/media/d9e30c_e31fba135fd64d85b49eb2bffa0a5217~mv2.jpg/v1/fill/w_305,h_205,fp_0.50_0.50,q_80,enc_auto/d9e30c_e31fba135fd64d85b49eb2bffa0a5217~mv2.jpg
+https://static.wixstatic.com/media/d9e30c_f6c1a408851a4a8389586869451d211b~mv2.jpg/v1/fill/w_305,h_205,fp_0.50_0.50,q_80,enc_auto/d9e30c_f6c1a408851a4a8389586869451d211b~mv2.jpg
+https://static.wixstatic.com/media/d9e30c_2e2fe77c280547fda0fda65d56c69f5a~mv2.jpg/v1/fill/w_305,h_205,fp_0.50_0.50,q_80,enc_auto/d9e30c_2e2fe77c280547fda0fda65d56c69f5a~mv2.jpg
