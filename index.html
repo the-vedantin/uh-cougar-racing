@@ -150,8 +150,16 @@
     }
   </style>
   <style id="codex-rich-text-fill-fix">
-    #site-root [data-testid='richTextElement'] .wixui-rich-text__text {
-      -webkit-text-fill-color: currentColor !important;
+    #mw2ua [data-testid='richTextElement'],
+    #mw2ua [data-testid='richTextElement'] .wixui-rich-text__text {
+      color: rgb(255, 255, 254) !important;
+      -webkit-text-fill-color: rgb(255, 255, 254) !important;
+    }
+
+    #mw2ua [data-testid='richTextElement'] [style*='color:#960C22'],
+    #mw2ua [data-testid='richTextElement'] [style*='color:#960C22'] .wixui-rich-text__text {
+      color: #960C22 !important;
+      -webkit-text-fill-color: #960C22 !important;
     }
   </style>
   
