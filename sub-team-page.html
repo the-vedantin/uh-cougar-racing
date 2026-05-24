@@ -151,6 +151,22 @@
   </style>
   
 
+  <style id="codex-rich-text-fill-fix">
+    #site-root [data-testid='richTextElement'],
+    #site-root [data-testid='richTextElement'] .wixui-rich-text__text {
+      color: rgb(255, 255, 254) !important;
+      -webkit-text-fill-color: rgb(255, 255, 254) !important;
+    }
+
+    #site-root [data-testid='richTextElement'] [style*='color:#960C22'],
+    #site-root [data-testid='richTextElement'] [style*='color: #960C22'],
+    #site-root [data-testid='richTextElement'] [style*='color:#960C22'] .wixui-rich-text__text,
+    #site-root [data-testid='richTextElement'] [style*='color: #960C22'] .wixui-rich-text__text {
+      color: #960C22 !important;
+      -webkit-text-fill-color: #960C22 !important;
+    }
+  </style>
+
   <script id="wix-skip-played-animations-setup">
     (function() {
         var navEntry = performance.getEntriesByType('navigation')[0];
@@ -984,6 +1000,67 @@ body { --wix-ads-height: 0px !important; }
     rewriteLinks();
   }
   new MutationObserver(rewriteLinks).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+<script id="codex-rich-text-fill-pin">
+(() => {
+  const white = 'rgb(255, 255, 254)';
+  const red = '#960C22';
+  const setImportant = (el, prop, value) => {
+    if (el.style.getPropertyValue(prop) !== value || el.style.getPropertyPriority(prop) !== 'important') {
+      el.style.setProperty(prop, value, 'important');
+    }
+  };
+  const applyColor = (el, color) => {
+    setImportant(el, 'color', color);
+    setImportant(el, '-webkit-text-fill-color', color);
+    setImportant(el, 'opacity', '1');
+    setImportant(el, 'visibility', 'visible');
+  };
+  const pinRichText = () => {
+    document.querySelectorAll('#site-root [data-testid="richTextElement"]').forEach(host => {
+      const redNodes = Array.from(host.querySelectorAll('[data-codex-red="true"], [style*="color:#960C22"], [style*="color: #960C22"]'));
+      redNodes.forEach(el => {
+        if (el.dataset) el.dataset.codexRed = 'true';
+      });
+      applyColor(host, white);
+      host.querySelectorAll('.wixui-rich-text__text, h1, h2, h3, h4, h5, h6, p, span, a').forEach(el => {
+        if (!el.closest('[data-codex-red="true"]')) applyColor(el, white);
+      });
+      redNodes.forEach(el => {
+        applyColor(el, red);
+        el.querySelectorAll('.wixui-rich-text__text, span').forEach(child => applyColor(child, red));
+      });
+    });
+  };
+  let queued = false;
+  const queuePin = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      pinRichText();
+    });
+  };
+  const start = () => {
+    pinRichText();
+    [250, 1000, 2500, 5000].forEach(delay => setTimeout(pinRichText, delay));
+    new MutationObserver(queuePin).observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'data-motion-enter', 'data-load-done']
+    });
+    window.addEventListener('load', pinRichText, { once: true });
+    window.addEventListener('pageshow', pinRichText);
+    window.addEventListener('scroll', queuePin, { passive: true });
+    window.addEventListener('resize', queuePin, { passive: true });
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
 })();
 </script>
 </body>

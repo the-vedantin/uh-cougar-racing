@@ -149,15 +149,17 @@
       }
     }
   </style>
-  <style id="codex-rich-text-fill-fix">
-    #mw2ua [data-testid='richTextElement'],
-    #mw2ua [data-testid='richTextElement'] .wixui-rich-text__text {
+    <style id="codex-rich-text-fill-fix">
+    #site-root [data-testid='richTextElement'],
+    #site-root [data-testid='richTextElement'] .wixui-rich-text__text {
       color: rgb(255, 255, 254) !important;
       -webkit-text-fill-color: rgb(255, 255, 254) !important;
     }
 
-    #mw2ua [data-testid='richTextElement'] [style*='color:#960C22'],
-    #mw2ua [data-testid='richTextElement'] [style*='color:#960C22'] .wixui-rich-text__text {
+    #site-root [data-testid='richTextElement'] [style*='color:#960C22'],
+    #site-root [data-testid='richTextElement'] [style*='color: #960C22'],
+    #site-root [data-testid='richTextElement'] [style*='color:#960C22'] .wixui-rich-text__text,
+    #site-root [data-testid='richTextElement'] [style*='color: #960C22'] .wixui-rich-text__text {
       color: #960C22 !important;
       -webkit-text-fill-color: #960C22 !important;
     }
@@ -1229,7 +1231,7 @@ Competitions challenge teams of university undergraduate and graduate students t
     setImportant(el, 'visibility', 'visible');
   };
   const pinRichText = () => {
-    document.querySelectorAll('#mw2ua [data-testid="richTextElement"]').forEach(host => {
+    document.querySelectorAll('#site-root [data-testid="richTextElement"]').forEach(host => {
       const redNodes = Array.from(host.querySelectorAll('[data-codex-red="true"], [style*="color:#960C22"], [style*="color: #960C22"]'));
       redNodes.forEach(el => {
         if (el.dataset) el.dataset.codexRed = 'true';
@@ -1244,15 +1246,28 @@ Competitions challenge teams of university undergraduate and graduate students t
       });
     });
   };
+  let queued = false;
+  const queuePin = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      pinRichText();
+    });
+  };
   const start = () => {
     pinRichText();
-    setTimeout(pinRichText, 250);
-    setTimeout(pinRichText, 1000);
-    setTimeout(pinRichText, 2500);
-    new MutationObserver(pinRichText).observe(document.documentElement, {
+    [250, 1000, 2500, 5000].forEach(delay => setTimeout(pinRichText, delay));
+    new MutationObserver(queuePin).observe(document.documentElement, {
       childList: true,
-      subtree: true
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'data-motion-enter', 'data-load-done']
     });
+    window.addEventListener('load', pinRichText, { once: true });
+    window.addEventListener('pageshow', pinRichText);
+    window.addEventListener('scroll', queuePin, { passive: true });
+    window.addEventListener('resize', queuePin, { passive: true });
   };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });
