@@ -1213,6 +1213,54 @@ Competitions challenge teams of university undergraduate and graduate students t
   new MutationObserver(rewriteLinks).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
+<script id="codex-rich-text-fill-pin">
+(() => {
+  const white = 'rgb(255, 255, 254)';
+  const red = '#960C22';
+  const setImportant = (el, prop, value) => {
+    if (el.style.getPropertyValue(prop) !== value || el.style.getPropertyPriority(prop) !== 'important') {
+      el.style.setProperty(prop, value, 'important');
+    }
+  };
+  const applyColor = (el, color) => {
+    setImportant(el, 'color', color);
+    setImportant(el, '-webkit-text-fill-color', color);
+    setImportant(el, 'opacity', '1');
+    setImportant(el, 'visibility', 'visible');
+  };
+  const pinRichText = () => {
+    document.querySelectorAll('#mw2ua [data-testid="richTextElement"]').forEach(host => {
+      const redNodes = Array.from(host.querySelectorAll('[data-codex-red="true"], [style*="color:#960C22"], [style*="color: #960C22"]'));
+      redNodes.forEach(el => {
+        if (el.dataset) el.dataset.codexRed = 'true';
+      });
+      applyColor(host, white);
+      host.querySelectorAll('.wixui-rich-text__text, h1, h2, h3, h4, h5, h6, p, span, a').forEach(el => {
+        if (!el.closest('[data-codex-red="true"]')) applyColor(el, white);
+      });
+      redNodes.forEach(el => {
+        applyColor(el, red);
+        el.querySelectorAll('.wixui-rich-text__text, span').forEach(child => applyColor(child, red));
+      });
+    });
+  };
+  const start = () => {
+    pinRichText();
+    setTimeout(pinRichText, 250);
+    setTimeout(pinRichText, 1000);
+    setTimeout(pinRichText, 2500);
+    new MutationObserver(pinRichText).observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
 <script id="codex-hero-gif-fallback">
 (() => {
   const gif = 'media/hero-negative-space.gif?v=slow2';
