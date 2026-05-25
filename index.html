@@ -873,6 +873,27 @@ body { --wix-ads-height: 0px !important; }
   pointer-events: none !important;
 }
 </style>
+<style id="codex-scroll-car-style">
+#codex-scroll-car {
+  position: fixed;
+  width: clamp(72px, 7.2vw, 138px);
+  height: auto;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -100%);
+  transition: opacity 120ms linear;
+  will-change: left, top, opacity;
+}
+#comp-mhohiyhd {
+  opacity: 0 !important;
+}
+@media (max-width: 767px) {
+  #codex-scroll-car {
+    width: clamp(52px, 14vw, 88px);
+  }
+}
+</style>
 </head>
 <body class='' >
 <script type="text/javascript">
@@ -1312,6 +1333,106 @@ Competitions challenge teams of university undergraduate and graduate students t
       attributeFilter: ['src', 'srcset']
     });
   };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
+<script id="codex-scroll-car-on-track">
+(() => {
+  const selectors = {
+    start: '#comp-m3d4saki',
+    track: '#comp-mhohiyhd',
+    finish: '#comp-mhohv8d9'
+  };
+  const src = 'media/fsae-scroll-car.png?v=1';
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  let car = null;
+  let queued = false;
+
+  const ensureCar = () => {
+    if (car && document.body.contains(car)) return car;
+    car = document.getElementById('codex-scroll-car') || document.createElement('img');
+    car.id = 'codex-scroll-car';
+    car.src = src;
+    car.alt = '';
+    car.width = 1106;
+    car.height = 2135;
+    car.decoding = 'async';
+    car.loading = 'eager';
+    car.setAttribute('aria-hidden', 'true');
+    if (!car.dataset.codexScrollCarBound) {
+      car.dataset.codexScrollCarBound = 'true';
+      car.addEventListener('load', queueUpdate);
+    }
+    if (!car.parentElement) document.body.appendChild(car);
+    return car;
+  };
+
+  const docTop = el => el.getBoundingClientRect().top + window.scrollY;
+  const docBottom = el => el.getBoundingClientRect().bottom + window.scrollY;
+
+  const update = () => {
+    queued = false;
+    const img = ensureCar();
+    const start = document.querySelector(selectors.start);
+    const track = document.querySelector(selectors.track);
+    const finish = document.querySelector(selectors.finish) || track;
+    if (!start || !track) {
+      img.style.opacity = '0';
+      return;
+    }
+
+    const startDoc = Math.max(docTop(start), docTop(track));
+    const finishDoc = Math.max(docBottom(finish), docBottom(track));
+    const startScroll = startDoc - window.innerHeight * 0.46;
+    const finishScroll = finishDoc - window.innerHeight * 0.56;
+    const rawProgress = (window.scrollY - startScroll) / Math.max(1, finishScroll - startScroll);
+    const progress = clamp(rawProgress, 0, 1);
+
+    const startRect = start.getBoundingClientRect();
+    const trackRect = track.getBoundingClientRect();
+    const finishRect = finish.getBoundingClientRect();
+    const carRect = img.getBoundingClientRect();
+    const fallbackCarHeight = (Number.parseFloat(getComputedStyle(img).width) || 0) * (2135 / 1106);
+    const carHeight = carRect.height || fallbackCarHeight;
+    const startY = startRect.top + carHeight;
+    const finishY = clamp(
+      finishRect.top + finishRect.height * 0.55 + 22,
+      startY,
+      trackRect.bottom + 48
+    );
+    const x = finish === track ? trackRect.left + trackRect.width / 2 : finishRect.left + finishRect.width / 2;
+    const y = startY + (finishY - startY) * progress;
+
+    img.style.left = `${x}px`;
+    img.style.top = `${y}px`;
+    img.style.opacity = '1';
+  };
+
+  const queueUpdate = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  };
+
+  const start = () => {
+    ensureCar();
+    update();
+    [250, 1000, 2500].forEach(delay => setTimeout(queueUpdate, delay));
+    window.addEventListener('scroll', queueUpdate, { passive: true });
+    window.addEventListener('resize', queueUpdate, { passive: true });
+    window.addEventListener('pageshow', queueUpdate);
+    new MutationObserver(queueUpdate).observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'data-motion-enter']
+    });
+  };
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });
   } else {
