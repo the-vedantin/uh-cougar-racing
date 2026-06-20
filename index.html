@@ -1488,8 +1488,7 @@ Competitions challenge teams of university undergraduate and graduate students t
     const maxLeft = Math.max(minLeft, viewportWidth - size - 16);
     const preferredCenterX = viewportWidth * 0.78;
     let left = clamp(preferredCenterX - size / 2, minLeft, maxLeft);
-    const modelVisualCenterY = 0.38;
-    let top = modelRowRect.top + modelRowRect.height / 2 - size * modelVisualCenterY;
+    let top = modelRowRect.top + modelRowRect.height / 2 - size / 2;
     if (viewportWidth < 900) {
       left = clamp(anchorRect.left + anchorRect.width - size, minLeft, maxLeft);
       top = anchorRect.bottom + 16;
@@ -1519,13 +1518,12 @@ Competitions challenge teams of university undergraduate and graduate students t
     const sphere = new THREE.Sphere();
     framedBox.getBoundingSphere(sphere);
     const radius = Math.max(sphere.radius, 1);
-    const targetY = size.y * 0.06;
     camera.near = radius / 100;
     camera.far = radius * 100;
     camera.position.set(radius * 1.45, radius * 0.75, radius * 1.85);
-    camera.lookAt(0, targetY, 0);
+    camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
-    controls.target.set(0, targetY, 0);
+    controls.target.set(0, 0, 0);
     controls.minDistance = radius * 1.15;
     controls.maxDistance = radius * 4.5;
     controls.update();
