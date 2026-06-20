@@ -1488,7 +1488,8 @@ Competitions challenge teams of university undergraduate and graduate students t
     const maxLeft = Math.max(minLeft, viewportWidth - size - 16);
     const preferredCenterX = viewportWidth * 0.78;
     let left = clamp(preferredCenterX - size / 2, minLeft, maxLeft);
-    let top = modelRowRect.top + modelRowRect.height / 2 - size / 2;
+    const modelVisualCenterY = 0.38;
+    let top = modelRowRect.top + modelRowRect.height / 2 - size * modelVisualCenterY;
     if (viewportWidth < 900) {
       left = clamp(anchorRect.left + anchorRect.width - size, minLeft, maxLeft);
       top = anchorRect.bottom + 16;
