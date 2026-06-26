@@ -146,14 +146,14 @@
         canvas = document.createElement('canvas');
         const preferredAttributes = {
           alpha: true,
-          antialias: false,
+          antialias: true,
           depth: true,
           stencil: false,
           preserveDrawingBuffer: false,
           powerPreference: 'default',
           failIfMajorPerformanceCaveat: false
         };
-        const lightAttributes = { alpha: true, antialias: false, depth: true };
+        const lightAttributes = { alpha: true, antialias: true, depth: true };
         const contextRequests = [
           ['webgl2', preferredAttributes],
           ['webgl', preferredAttributes],
@@ -180,7 +180,7 @@
           canvas,
           context,
           alpha: true,
-          antialias: false,
+          antialias: true,
           powerPreference: 'default'
         });
       };
@@ -206,8 +206,35 @@
         renderer.outputEncoding = THREE.sRGBEncoding;
       }
       renderer.toneMapping = THREE.ACESFilmicToneMapping || THREE.LinearToneMapping;
-      renderer.toneMappingExposure = 1.6;
+      renderer.toneMappingExposure = 1.0;
       document.body.appendChild(renderer.domElement);
+
+      // Studio environment map (PMREM): gives the clearcoat / specular / sheen
+      // PBR materials smooth reflections so they read crisp instead of flat.
+      const buildEnvironment = () => {
+        const pmrem = new THREE.PMREMGenerator(renderer);
+        const es = new THREE.Scene();
+        es.add(new THREE.Mesh(
+          new THREE.BoxGeometry(40, 40, 40),
+          new THREE.MeshStandardMaterial({ side: THREE.BackSide, roughness: 1, metalness: 0, color: 0x2a2d33 })
+        ));
+        const panel = (w, h, x, y, z, color, intensity) => {
+          const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color }));
+          m.material.color.multiplyScalar(intensity);
+          m.position.set(x, y, z);
+          m.lookAt(0, 0, 0);
+          es.add(m);
+        };
+        panel(14, 14, 8, 14, 8, 0xffffff, 3.0);
+        panel(12, 12, -10, 9, -4, 0xeaf2ff, 1.6);
+        panel(18, 7, 0, 16, 2, 0xffffff, 2.2);
+        panel(10, 10, 6, 2, -12, 0xfff2e0, 1.2);
+        const texture = pmrem.fromScene(es, 0.04).texture;
+        es.traverse(o => { if (o.geometry) o.geometry.dispose(); });
+        pmrem.dispose();
+        return texture;
+      };
+      try { scene.environment = buildEnvironment(); } catch (e) { console.warn('env map skipped', e); }
 
       // --- Interaction: orbit + zoom + PAN -------------------------------
       controls.enableDamping = true;
@@ -222,24 +249,23 @@
       controls.addEventListener('change', requestRender);
       controls.addEventListener('start', () => { controls.autoRotate = false; });
 
-      scene.add(new THREE.AmbientLight(0xffffff, 2.35));
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x363636, 2.1));
+      // Lighting is mostly carried by the environment map now; these just add
+      // gentle directional shaping so it isn't flat. (Old rig was ~4x hotter
+      // and, with no env map, made metals look noisy/"grainy".)
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x363636, 0.4));
 
-      const key = new THREE.DirectionalLight(0xffffff, 4.2);
+      const key = new THREE.DirectionalLight(0xffffff, 1.6);
       key.position.set(5, 8, 7);
       scene.add(key);
 
-      const fill = new THREE.DirectionalLight(0xffffff, 2.4);
+      const fill = new THREE.DirectionalLight(0xffffff, 0.8);
       fill.position.set(-7, 4, -5);
       scene.add(fill);
 
-      const rim = new THREE.DirectionalLight(0xffffff, 1.8);
+      const rim = new THREE.DirectionalLight(0xffffff, 0.7);
       rim.position.set(0, 5, -8);
       scene.add(rim);
-
-      const front = new THREE.DirectionalLight(0xffffff, 2.2);
-      front.position.set(0, 2, 9);
-      scene.add(front);
 
       const resize = () => {
         const width = Math.max(1, window.innerWidth);
@@ -263,14 +289,16 @@
         framedBox.getBoundingSphere(sphere);
         const radius = Math.max(sphere.radius, 1);
 
-        camera.near = radius / 200;
-        camera.far = radius * 200;
+        // Tight near/far ratio (~40:1) so the depth buffer has precision and
+        // the layered bodywork/decals don't z-fight. (Was 0.005r..200r ≈ 40000:1.)
+        camera.near = radius * 0.2;
+        camera.far = radius * 8;
         camera.position.set(radius * 0.95, radius * 0.62, radius * 1.35);
         camera.lookAt(0, 0, 0);
         camera.updateProjectionMatrix();
 
         controls.target.set(0, 0, 0);
-        controls.minDistance = radius * 0.45;
+        controls.minDistance = radius * 0.6;
         controls.maxDistance = radius * 4.4;
         // Keep panning from flinging the car off-screen.
         controls.update();
@@ -288,8 +316,9 @@
           child.frustumCulled = false;
           const materials = Array.isArray(child.material) ? child.material : [child.material];
           materials.filter(Boolean).forEach(material => {
-            material.side = THREE.DoubleSide;
-            if ('envMapIntensity' in material) material.envMapIntensity = 1.8;
+            // Keep each material's authored side. Forcing DoubleSide drew the
+            // cockpit/interior backfaces and created the grey slab artifact.
+            if ('envMapIntensity' in material) material.envMapIntensity = 1.0;
             material.needsUpdate = true;
           });
         });
