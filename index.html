@@ -1578,12 +1578,31 @@ Competitions challenge teams of university undergraduate and graduate students t
   };
 
   const createRenderer = () => {
-    try {
-      return new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    } catch (firstError) {
-      console.warn('Cougar Racing antialias WebGL failed, retrying without antialias', firstError);
-      return new THREE.WebGLRenderer({ alpha: true, antialias: false });
+    const canvas = document.createElement('canvas');
+    const attributes = {
+      alpha: true,
+      antialias: false,
+      depth: true,
+      stencil: false,
+      preserveDrawingBuffer: false,
+      powerPreference: 'default',
+      failIfMajorPerformanceCaveat: false
+    };
+    const context =
+      canvas.getContext('webgl2', attributes) ||
+      canvas.getContext('webgl', attributes) ||
+      canvas.getContext('experimental-webgl', attributes);
+    if (!context) {
+      throw new Error('No WebGL context returned by the browser');
     }
+    viewer.dataset.webglContext = context.constructor && context.constructor.name ? context.constructor.name : 'webgl';
+    return new THREE.WebGLRenderer({
+      canvas,
+      context,
+      alpha: true,
+      antialias: false,
+      powerPreference: 'default'
+    });
   };
 
   const frameModel = () => {
@@ -1622,6 +1641,7 @@ Competitions challenge teams of university undergraduate and graduate students t
     if (loadStarted) return;
     loadStarted = true;
     const el = ensureViewer();
+
     try {
       if (!window.THREE) await loadScript('scripts/vendor/three.min.js');
       if (!THREE.OrbitControls) await loadScript('scripts/vendor/OrbitControls.js');
@@ -1708,8 +1728,9 @@ Competitions challenge teams of university undergraduate and graduate students t
       );
     } catch (error) {
       console.error('Cougar Racing 3D renderer failed to start', error);
+      const message = error && error.message ? error.message : String(error);
       el.dataset.modelError = 'renderer-start-failed';
-      setStatus('3D renderer failed to start');
+      setStatus(`3D renderer failed: ${message.slice(0, 72)}`);
     }
   };
 
