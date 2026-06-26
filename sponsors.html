@@ -405,6 +405,50 @@ body { --wix-ads-height: 0px !important; }
 }
 .SKIP_TO_CONTENT_BTN { display: none !important; }
 </style>
+<style id="codex-static-sponsors-style">
+#codex-sponsors-static {
+  background: #000;
+  color: #fffffe;
+  padding: 6px 24px 88px;
+  font-family: helvetica-w01-roman, helvetica, sans-serif;
+}
+#codex-sponsors-static .codex-sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 38px 42px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+#codex-sponsors-static .codex-sponsor-tile {
+  min-height: 168px;
+  padding: 26px 30px;
+  background: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#codex-sponsors-static .codex-sponsor-tile img {
+  display: block;
+  max-width: 100%;
+  max-height: 138px;
+  object-fit: contain;
+}
+@media (max-width: 900px) {
+  #codex-sponsors-static .codex-sponsors-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  #codex-sponsors-static {
+    padding: 6px 18px 64px;
+  }
+  #codex-sponsors-static .codex-sponsors-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+</style>
 </head>
 <body class='' >
 <script type="text/javascript">
@@ -796,6 +840,68 @@ body { --wix-ads-height: 0px !important; }
     window.addEventListener('scroll', queuePin, { passive: true });
     window.addEventListener('resize', queuePin, { passive: true });
   };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
+<script id="codex-static-sponsors-script">
+(() => {
+  const sponsors = [
+    ['Kratz Coffee', 'media/sponsor-kratz-coffee.png'],
+    ['Fluor', 'media/sponsor-fluor.png'],
+    ['Gene Haas Foundation', 'media/sponsor-gene-haas-foundation.png'],
+    ['Houston Powder Coaters / Makers Development Group', 'media/sponsor-houston-powder-coaters.png'],
+    ['GoEngineer', 'media/sponsor-goengineer.png'],
+    ['AmeriTex Machine and Fabrication', 'media/sponsor-ameritex.png'],
+    ['Baker Hughes', 'media/sponsor-baker-hughes.png'],
+    ['SpeedSportz Racing Park', 'media/sponsor-speedsportz.png'],
+    ['Salcedo Engineering, L.L.C.', 'media/sponsor-salcedo-engineering.png'],
+    ['Bend-It', 'media/sponsor-bend-it.png'],
+    ['Rush Auto Works', 'media/sponsor-rush-auto-works.png'],
+    ['Blue Ox', 'media/sponsor-blue-ox.png'],
+    ['Katy Hydraulics', 'media/sponsor-katy-hydraulics.png'],
+    ['Ironrod Steel Co.', 'media/sponsor-ironrod-steel.png']
+  ];
+
+  const renderSponsors = () => {
+    if (document.getElementById('codex-sponsors-static')) return true;
+    const headingSection = document.getElementById('comp-mhuvh1yb');
+    if (!headingSection) return false;
+
+    const section = document.createElement('section');
+    section.id = 'codex-sponsors-static';
+    section.setAttribute('aria-label', 'Sponsor logos');
+
+    const grid = document.createElement('div');
+    grid.className = 'codex-sponsors-grid';
+
+    sponsors.forEach(([name, src]) => {
+      const tile = document.createElement('div');
+      tile.className = 'codex-sponsor-tile';
+
+      const image = document.createElement('img');
+      image.src = src;
+      image.alt = name;
+      image.loading = 'eager';
+      image.decoding = 'async';
+
+      tile.appendChild(image);
+      grid.appendChild(tile);
+    });
+
+    section.appendChild(grid);
+    headingSection.insertAdjacentElement('afterend', section);
+    return true;
+  };
+
+  const start = () => {
+    if (renderSponsors()) return;
+    [100, 500, 1200, 2500].forEach(delay => setTimeout(renderSponsors, delay));
+  };
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });
   } else {
