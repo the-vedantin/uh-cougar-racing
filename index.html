@@ -874,7 +874,7 @@ body { --wix-ads-height: 0px !important; }
 }
 </style>
 <style id="codex-car-model-style">
-#codex-car-model-viewer {
+#codex-car-3d-viewer {
   position: absolute;
   z-index: 30;
   width: 540px;
@@ -885,45 +885,15 @@ body { --wix-ads-height: 0px !important; }
   pointer-events: auto;
   touch-action: none;
 }
-#codex-car-model-viewer.is-dragging {
+#codex-car-3d-viewer.is-dragging {
   cursor: grabbing;
 }
-#codex-car-model-viewer canvas {
+#codex-car-model-frame {
   display: block;
-  position: relative;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 260ms ease;
+  border: 0;
+  background: transparent;
   width: 100% !important;
   height: 100% !important;
-}
-#codex-car-model-element {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  --poster-color: transparent;
-}
-#codex-car-model-viewer[data-loaded="true"] canvas {
-  opacity: 1 !important;
-}
-#codex-car-model-fallback {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transform: rotate(-90deg) scale(0.78);
-  transform-origin: center;
-  opacity: 1;
-  transition: opacity 260ms ease;
-  pointer-events: none;
-}
-#codex-car-model-viewer[data-loaded="true"] #codex-car-model-fallback {
-  opacity: 0 !important;
 }
 #codex-car-model-caption {
   position: absolute;
@@ -938,12 +908,6 @@ body { --wix-ads-height: 0px !important; }
   pointer-events: none;
   text-shadow: 0 1px 8px #000;
   white-space: nowrap;
-}
-#codex-car-model-viewer[data-load-error="true"] {
-  cursor: default;
-}
-#codex-car-model-viewer[data-load-error="true"] canvas {
-  display: none;
 }
 #comp-mhohiyhd,
 #comp-mhohv8d9 {
@@ -1023,7 +987,7 @@ body { --wix-ads-height: 0px !important; }
   object-position: 50% 50% !important;
 }
 @media (max-width: 767px) {
-  #codex-car-model-viewer {
+  #codex-car-3d-viewer {
     width: 340px;
     height: 340px;
   }
@@ -1475,68 +1439,29 @@ Competitions challenge teams of university undergraduate and graduate students t
   }
 })();
 </script>
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-<script src="scripts/vendor/three.min.js"></script>
-<script src="scripts/vendor/OrbitControls.js"></script>
-<script src="scripts/vendor/GLTFLoader.js"></script>
-<script id="codex-car-model-viewer-script">
+<script id="codex-car-3d-frame-script">
 (() => {
-  const modelSrc = 'media/fsae-car-26.glb?v=1';
   const anchorSelector = '#comp-m3d4saki';
   const modelRowSelector = '#comp-m3d4sakr12';
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   let viewer = null;
-  let renderer = null;
-  let scene = null;
-  let camera = null;
-  let controls = null;
-  let model = null;
   let placementQueued = false;
-  let usingModelViewer = false;
 
   const ensureViewer = () => {
     if (viewer && document.body.contains(viewer)) return viewer;
     const oldCar = document.getElementById('codex-scroll-car');
     if (oldCar) oldCar.remove();
-    viewer = document.getElementById('codex-car-model-viewer') || document.createElement('div');
-    viewer.id = 'codex-car-model-viewer';
+    viewer = document.getElementById('codex-car-3d-viewer') || document.createElement('div');
+    viewer.id = 'codex-car-3d-viewer';
     viewer.setAttribute('aria-label', 'Interactive 3D Cougar Racing car model');
-    if (!viewer.dataset.loaded) viewer.dataset.loaded = 'false';
-    let fallback = viewer.querySelector('#codex-car-model-fallback');
-    if (!fallback) {
-      fallback = document.createElement('img');
-      fallback.id = 'codex-car-model-fallback';
-      fallback.src = 'media/fsae-car-top.png?v=1';
-      fallback.alt = '';
-      fallback.decoding = 'async';
-      fallback.loading = 'eager';
-      viewer.appendChild(fallback);
-    }
-    let modelElement = viewer.querySelector('#codex-car-model-element');
-    if (!modelElement && 'customElements' in window) {
-      modelElement = document.createElement('model-viewer');
-      modelElement.id = 'codex-car-model-element';
-      modelElement.setAttribute('src', modelSrc);
-      modelElement.setAttribute('poster', 'media/fsae-car-top.png?v=1');
-      modelElement.setAttribute('camera-controls', '');
-      modelElement.setAttribute('auto-rotate', '');
-      modelElement.setAttribute('auto-rotate-delay', '0');
-      modelElement.setAttribute('rotation-per-second', '18deg');
-      modelElement.setAttribute('interaction-prompt', 'none');
-      modelElement.setAttribute('shadow-intensity', '0');
-      modelElement.setAttribute('exposure', '1.2');
-      modelElement.setAttribute('camera-orbit', '45deg 65deg auto');
-      modelElement.setAttribute('field-of-view', '30deg');
-      modelElement.addEventListener('load', () => {
-        viewer.dataset.loaded = 'true';
-        delete viewer.dataset.loadError;
-        const fallback = viewer.querySelector('#codex-car-model-fallback');
-        if (fallback) fallback.style.setProperty('opacity', '0', 'important');
-      });
-      modelElement.addEventListener('error', () => {
-        if (!renderer) viewer.dataset.loadError = 'true';
-      });
-      viewer.appendChild(modelElement);
+    let frame = viewer.querySelector('#codex-car-model-frame');
+    if (!frame) {
+      frame = document.createElement('iframe');
+      frame.id = 'codex-car-model-frame';
+      frame.src = 'car-model.html';
+      frame.title = 'Interactive 3D Cougar Racing car model';
+      frame.setAttribute('allowtransparency', 'true');
+      viewer.appendChild(frame);
     }
     let caption = viewer.querySelector('#codex-car-model-caption');
     if (!caption) {
@@ -1545,22 +1470,8 @@ Competitions challenge teams of university undergraduate and graduate students t
       caption.textContent = 'Samantha : 2025-2026 ICE Car';
       viewer.appendChild(caption);
     }
-    viewer.addEventListener('pointerdown', () => viewer.classList.add('is-dragging'));
-    viewer.addEventListener('pointerup', () => viewer.classList.remove('is-dragging'));
-    viewer.addEventListener('pointercancel', () => viewer.classList.remove('is-dragging'));
-    viewer.addEventListener('pointerleave', () => viewer.classList.remove('is-dragging'));
     if (!viewer.parentElement) document.body.appendChild(viewer);
     return viewer;
-  };
-
-  const resizeRenderer = () => {
-    if (!renderer || !viewer) return;
-    const width = Math.max(1, viewer.clientWidth);
-    const height = Math.max(1, viewer.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setSize(width, height, false);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
   };
 
   const positionViewer = () => {
@@ -1592,7 +1503,6 @@ Competitions challenge teams of university undergraduate and graduate students t
     el.style.height = `${size}px`;
     el.style.left = `${Math.round(window.scrollX + left)}px`;
     el.style.top = `${Math.round(window.scrollY + top)}px`;
-    resizeRenderer();
   };
 
   const queuePlacement = () => {
@@ -1601,119 +1511,9 @@ Competitions challenge teams of university undergraduate and graduate students t
     requestAnimationFrame(positionViewer);
   };
 
-  const frameModel = () => {
-    if (!model) return;
-    const box = new THREE.Box3().setFromObject(model);
-    const center = new THREE.Vector3();
-    const size = new THREE.Vector3();
-    box.getCenter(center);
-    box.getSize(size);
-    model.position.sub(center);
-    const framedBox = new THREE.Box3().setFromObject(model);
-    const sphere = new THREE.Sphere();
-    framedBox.getBoundingSphere(sphere);
-    const radius = Math.max(sphere.radius, 1);
-    camera.near = radius / 100;
-    camera.far = radius * 100;
-    camera.position.set(radius * 1.45, radius * 0.75, radius * 1.85);
-    camera.lookAt(0, 0, 0);
-    camera.updateProjectionMatrix();
-    controls.target.set(0, 0, 0);
-    controls.minDistance = radius * 1.15;
-    controls.maxDistance = radius * 4.5;
-    controls.update();
-  };
-
-  const animate = () => {
-    requestAnimationFrame(animate);
-    if (controls) controls.update();
-    if (renderer && scene && camera) renderer.render(scene, camera);
-  };
-
   const initViewer = () => {
-    const el = ensureViewer();
-    const modelElement = el.querySelector('#codex-car-model-element');
-    if (modelElement) {
-      usingModelViewer = true;
-      positionViewer();
-      [250, 1000, 2500].forEach(delay => setTimeout(queuePlacement, delay));
-      window.addEventListener('resize', queuePlacement, { passive: true });
-      window.addEventListener('scroll', queuePlacement, { passive: true });
-      window.addEventListener('pageshow', queuePlacement);
-      new MutationObserver(queuePlacement).observe(document.documentElement, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['class', 'data-motion-enter']
-      });
-      setTimeout(() => {
-        if (el.dataset.loaded !== 'true') {
-          const fallback = el.querySelector('#codex-car-model-fallback');
-          if (fallback) fallback.style.setProperty('opacity', '1', 'important');
-        }
-      }, 3500);
-      return;
-    }
-    if (!window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) {
-      el.dataset.loadError = 'true';
-      return;
-    }
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(36, 1, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: true,
-      powerPreference: 'high-performance'
-    });
-    renderer.setClearColor(0x000000, 0);
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.domElement.style.setProperty('opacity', '0', 'important');
-    el.appendChild(renderer.domElement);
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.enablePan = false;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.55;
-    controls.rotateSpeed = 0.65;
-    controls.zoomSpeed = 0.75;
-
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x202020, 1.35));
-    const key = new THREE.DirectionalLight(0xffffff, 1.7);
-    key.position.set(4, 7, 6);
-    scene.add(key);
-    const rim = new THREE.DirectionalLight(0xffffff, 0.75);
-    rim.position.set(-5, 3, -4);
-    scene.add(rim);
-
-    const loader = new THREE.GLTFLoader();
-    loader.load(modelSrc, gltf => {
-      model = gltf.scene || gltf.scenes[0];
-      model.traverse(child => {
-        if (!child.isMesh) return;
-        child.frustumCulled = false;
-        const materials = Array.isArray(child.material) ? child.material : [child.material];
-        materials.filter(Boolean).forEach(material => {
-          material.needsUpdate = true;
-        });
-      });
-      scene.add(model);
-      frameModel();
-      el.dataset.loaded = 'true';
-      delete el.dataset.loadError;
-      renderer.domElement.style.setProperty('opacity', '1', 'important');
-      const fallback = el.querySelector('#codex-car-model-fallback');
-      if (fallback) fallback.style.setProperty('opacity', '0', 'important');
-      queuePlacement();
-    }, undefined, error => {
-      console.error('Cougar Racing model failed to load', error);
-      el.dataset.loadError = 'true';
-      renderer.domElement.style.display = 'none';
-      const fallback = el.querySelector('#codex-car-model-fallback');
-      if (fallback) fallback.style.setProperty('opacity', '1', 'important');
-    });
-
+    ensureViewer();
     positionViewer();
-    animate();
     [250, 1000, 2500].forEach(delay => setTimeout(queuePlacement, delay));
     window.addEventListener('resize', queuePlacement, { passive: true });
     window.addEventListener('scroll', queuePlacement, { passive: true });
