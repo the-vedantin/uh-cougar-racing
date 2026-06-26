@@ -65,6 +65,27 @@
       pointer-events: none;
       white-space: nowrap;
     }
+
+    /* Diagnostic line, shown ONLY when 3D falls back, so the exact failure
+       reason is visible (and screenshot-able) instead of guessed at. */
+    #mv-diag {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      max-width: 92vw;
+      color: #ffd1d1;
+      background: rgba(0, 0, 0, 0.72);
+      border: 1px solid rgba(255, 80, 80, 0.5);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font: 12px/1.35 monospace;
+      text-align: center;
+      white-space: pre-wrap;
+      word-break: break-word;
+      pointer-events: none;
+      z-index: 9;
+    }
   </style>
 </head>
 <body>
@@ -76,16 +97,44 @@
   <script>
     (() => {
       const status = document.getElementById('status');
-      const showFallback = reason => {
+
+      const probeWebGL = () => {
+        // Use a FRESH canvas per context type: a canvas can only ever hold one
+        // context, so reusing it would make the second probe falsely report "no".
+        const out = { webgl2: false, webgl: false, error: null };
+        const tryCtx = type => {
+          try { return !!document.createElement('canvas').getContext(type); }
+          catch (e) { out.error = String((e && e.message) || e); return false; }
+        };
+        out.webgl2 = tryCtx('webgl2');
+        out.webgl = tryCtx('webgl') || tryCtx('experimental-webgl');
+        return out;
+      };
+
+      const showFallback = (reason, detail) => {
         document.body.dataset.modelLoaded = 'fallback';
         document.body.dataset.modelFallback = reason;
         if (status) status.remove();
-        if (document.getElementById('fallback-car')) return;
-        const image = document.createElement('img');
-        image.id = 'fallback-car';
-        image.alt = 'Samantha 2025-2026 ICE Car';
-        image.src = 'media/fsae-car-fallback.png?v=2';
-        document.body.appendChild(image);
+        if (!document.getElementById('fallback-car')) {
+          const image = document.createElement('img');
+          image.id = 'fallback-car';
+          image.alt = 'Samantha 2025-2026 ICE Car';
+          image.src = 'media/fsae-car-fallback.png?v=2';
+          document.body.appendChild(image);
+        }
+        if (!document.getElementById('mv-diag')) {
+          const wg = probeWebGL();
+          const diag = document.createElement('div');
+          diag.id = 'mv-diag';
+          diag.textContent =
+            'why 3D fell back: ' + reason +
+            (detail ? ' — ' + String(detail).slice(0, 100) : '') +
+            '\nWebGL2: ' + (wg.webgl2 ? 'yes' : 'NO') +
+            ' · WebGL: ' + (wg.webgl ? 'yes' : 'NO') +
+            (wg.error ? ' · probe error: ' + wg.error.slice(0, 60) : '');
+          document.body.appendChild(diag);
+          document.body.dataset.modelDiag = diag.textContent.replace(/\n/g, ' | ');
+        }
       };
 
       const scene = new THREE.Scene();
@@ -140,7 +189,7 @@
         renderer = buildRenderer();
       } catch (error) {
         console.error('Cougar Racing WebGL failed to start', error);
-        showFallback('webgl-unavailable');
+        showFallback('webgl-unavailable', (error && error.message) || error);
         return;
       }
 
@@ -269,7 +318,8 @@
               if (status) status.textContent = 'Retrying 3D model';
               setTimeout(() => loadModel(attempt + 1), 800);
             } else {
-              showFallback('glb-load-failed');
+              const msg = error && (error.message || error.type || error.target && ('http ' + (error.target.status || '?'))) || error;
+              showFallback('glb-load-failed', msg);
             }
           }
         );
