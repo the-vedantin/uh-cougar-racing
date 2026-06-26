@@ -876,7 +876,7 @@ body { --wix-ads-height: 0px !important; }
 <style id="codex-car-model-style">
 #codex-car-3d-viewer {
   position: absolute;
-  z-index: 30;
+  z-index: 80;
   width: 540px;
   height: 540px;
   overflow: visible;
@@ -884,6 +884,8 @@ body { --wix-ads-height: 0px !important; }
   cursor: grab;
   pointer-events: auto;
   touch-action: none;
+  isolation: isolate;
+  transform: translateZ(0);
 }
 #codex-car-3d-viewer.is-dragging {
   cursor: grabbing;
@@ -894,6 +896,8 @@ body { --wix-ads-height: 0px !important; }
   background: transparent;
   width: 100% !important;
   height: 100% !important;
+  position: relative;
+  z-index: 1;
 }
 #codex-car-model-caption {
   position: absolute;
@@ -1458,8 +1462,9 @@ Competitions challenge teams of university undergraduate and graduate students t
     if (!frame) {
       frame = document.createElement('iframe');
       frame.id = 'codex-car-model-frame';
-      frame.src = 'car-model.html';
+      frame.src = 'car-model.html?v=2';
       frame.title = 'Interactive 3D Cougar Racing car model';
+      frame.loading = 'eager';
       frame.setAttribute('allowtransparency', 'true');
       viewer.appendChild(frame);
     }

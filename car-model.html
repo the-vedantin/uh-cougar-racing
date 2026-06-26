@@ -21,6 +21,12 @@
       height: 100% !important;
       background: transparent;
       cursor: grab;
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    body[data-model-loaded="true"] canvas {
+      opacity: 1;
     }
 
     canvas:active {
@@ -29,13 +35,20 @@
 
     #status {
       position: fixed;
-      inset: auto 0 24px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       color: #fffffe;
-      font-size: 13px;
+      background: rgba(0, 0, 0, 0.58);
+      border: 1px solid rgba(255, 255, 254, 0.24);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
       line-height: 1.2;
       text-align: center;
       text-shadow: 0 1px 8px #000;
       pointer-events: none;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -48,12 +61,20 @@
     (() => {
       const status = document.getElementById('status');
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 10000);
-      const renderer = new THREE.WebGLRenderer({
-        alpha: true,
-        antialias: true,
-        powerPreference: 'high-performance'
-      });
+      const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 10000);
+      let renderer = null;
+      try {
+        renderer = new THREE.WebGLRenderer({
+          alpha: true,
+          antialias: true,
+          powerPreference: 'high-performance'
+        });
+      } catch (error) {
+        console.error('Cougar Racing WebGL failed to start', error);
+        status.textContent = '3D model needs WebGL';
+        document.body.dataset.modelError = 'true';
+        return;
+      }
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
       let model = null;
 
@@ -65,30 +86,34 @@
         renderer.outputEncoding = THREE.sRGBEncoding;
       }
       renderer.toneMapping = THREE.ACESFilmicToneMapping || THREE.LinearToneMapping;
-      renderer.toneMappingExposure = 1.25;
+      renderer.toneMappingExposure = 1.6;
       document.body.appendChild(renderer.domElement);
 
       controls.enableDamping = true;
       controls.enablePan = false;
       controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.55;
+      controls.autoRotateSpeed = 0.45;
       controls.rotateSpeed = 0.65;
       controls.zoomSpeed = 0.7;
 
-      scene.add(new THREE.AmbientLight(0xffffff, 1.6));
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x303030, 1.45));
+      scene.add(new THREE.AmbientLight(0xffffff, 2.35));
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x363636, 2.1));
 
-      const key = new THREE.DirectionalLight(0xffffff, 2.4);
+      const key = new THREE.DirectionalLight(0xffffff, 4.2);
       key.position.set(5, 8, 7);
       scene.add(key);
 
-      const fill = new THREE.DirectionalLight(0xffffff, 1.1);
+      const fill = new THREE.DirectionalLight(0xffffff, 2.4);
       fill.position.set(-7, 4, -5);
       scene.add(fill);
 
-      const rim = new THREE.DirectionalLight(0xffffff, 0.9);
+      const rim = new THREE.DirectionalLight(0xffffff, 1.8);
       rim.position.set(0, 5, -8);
       scene.add(rim);
+
+      const front = new THREE.DirectionalLight(0xffffff, 2.2);
+      front.position.set(0, 2, 9);
+      scene.add(front);
 
       const resize = () => {
         const width = Math.max(1, window.innerWidth);
@@ -113,19 +138,19 @@
 
         camera.near = radius / 200;
         camera.far = radius * 200;
-        camera.position.set(radius * 1.15, radius * 0.82, radius * 1.85);
+        camera.position.set(radius * 0.95, radius * 0.62, radius * 1.35);
         camera.lookAt(0, 0, 0);
         camera.updateProjectionMatrix();
 
         controls.target.set(0, 0, 0);
-        controls.minDistance = radius * 0.95;
-        controls.maxDistance = radius * 4.2;
+        controls.minDistance = radius * 0.7;
+        controls.maxDistance = radius * 4.4;
         controls.update();
       };
 
       const loader = new THREE.GLTFLoader();
       loader.load(
-        'media/fsae-car-26.glb?v=1',
+        'media/fsae-car-26.glb?v=2',
         gltf => {
           model = gltf.scene || gltf.scenes[0];
           model.traverse(child => {
@@ -134,13 +159,17 @@
             const materials = Array.isArray(child.material) ? child.material : [child.material];
             materials.filter(Boolean).forEach(material => {
               material.side = THREE.DoubleSide;
+              if ('envMapIntensity' in material) material.envMapIntensity = 1.8;
               material.needsUpdate = true;
             });
           });
           scene.add(model);
           frameModel();
-          status.remove();
           document.body.dataset.modelLoaded = 'true';
+          requestAnimationFrame(() => {
+            renderer.render(scene, camera);
+            status.remove();
+          });
         },
         progress => {
           if (!progress.lengthComputable) return;
