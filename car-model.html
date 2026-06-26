@@ -71,7 +71,7 @@
         });
       } catch (error) {
         console.error('Cougar Racing WebGL failed to start', error);
-        status.textContent = '3D model needs WebGL';
+        status.textContent = '3D renderer failed to start';
         document.body.dataset.modelError = 'true';
         return;
       }
