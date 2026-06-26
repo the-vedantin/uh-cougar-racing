@@ -892,8 +892,29 @@ body { --wix-ads-height: 0px !important; }
   display: block;
   position: relative;
   z-index: 1;
+  opacity: 0;
+  transition: opacity 260ms ease;
   width: 100% !important;
   height: 100% !important;
+}
+#codex-car-model-viewer[data-loaded="true"] canvas {
+  opacity: 1 !important;
+}
+#codex-car-model-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: rotate(-90deg) scale(0.78);
+  transform-origin: center;
+  opacity: 1;
+  transition: opacity 260ms ease;
+  pointer-events: none;
+}
+#codex-car-model-viewer[data-loaded="true"] #codex-car-model-fallback {
+  opacity: 0 !important;
 }
 #codex-car-model-caption {
   position: absolute;
@@ -910,6 +931,9 @@ body { --wix-ads-height: 0px !important; }
   white-space: nowrap;
 }
 #codex-car-model-viewer[data-load-error="true"] {
+  cursor: default;
+}
+#codex-car-model-viewer[data-load-error="true"] canvas {
   display: none;
 }
 #comp-mhohiyhd,
@@ -1466,6 +1490,17 @@ Competitions challenge teams of university undergraduate and graduate students t
     viewer = document.getElementById('codex-car-model-viewer') || document.createElement('div');
     viewer.id = 'codex-car-model-viewer';
     viewer.setAttribute('aria-label', 'Interactive 3D Cougar Racing car model');
+    if (!viewer.dataset.loaded) viewer.dataset.loaded = 'false';
+    let fallback = viewer.querySelector('#codex-car-model-fallback');
+    if (!fallback) {
+      fallback = document.createElement('img');
+      fallback.id = 'codex-car-model-fallback';
+      fallback.src = 'media/fsae-car-top.png?v=1';
+      fallback.alt = '';
+      fallback.decoding = 'async';
+      fallback.loading = 'eager';
+      viewer.appendChild(fallback);
+    }
     let caption = viewer.querySelector('#codex-car-model-caption');
     if (!caption) {
       caption = document.createElement('div');
@@ -1573,6 +1608,7 @@ Competitions challenge teams of university undergraduate and graduate students t
     });
     renderer.setClearColor(0x000000, 0);
     renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.domElement.style.setProperty('opacity', '0', 'important');
     el.appendChild(renderer.domElement);
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -1603,10 +1639,18 @@ Competitions challenge teams of university undergraduate and graduate students t
       });
       scene.add(model);
       frameModel();
+      el.dataset.loaded = 'true';
+      delete el.dataset.loadError;
+      renderer.domElement.style.setProperty('opacity', '1', 'important');
+      const fallback = el.querySelector('#codex-car-model-fallback');
+      if (fallback) fallback.style.setProperty('opacity', '0', 'important');
       queuePlacement();
     }, undefined, error => {
       console.error('Cougar Racing model failed to load', error);
       el.dataset.loadError = 'true';
+      renderer.domElement.style.display = 'none';
+      const fallback = el.querySelector('#codex-car-model-fallback');
+      if (fallback) fallback.style.setProperty('opacity', '1', 'important');
     });
 
     positionViewer();
