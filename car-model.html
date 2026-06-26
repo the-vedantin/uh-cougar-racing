@@ -165,11 +165,9 @@
           });
           scene.add(model);
           frameModel();
+          renderer.render(scene, camera);
           document.body.dataset.modelLoaded = 'true';
-          requestAnimationFrame(() => {
-            renderer.render(scene, camera);
-            status.remove();
-          });
+          status.remove();
         },
         progress => {
           if (!progress.lengthComputable) return;
