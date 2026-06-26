@@ -33,6 +33,29 @@
       cursor: grabbing;
     }
 
+    #fallback-car {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: min(96vw, 96vh);
+      height: min(96vw, 96vh);
+      object-fit: contain;
+      transform-origin: 50% 50%;
+      transform: translate(-50%, -50%) rotate(90deg);
+      animation: fallback-turntable 18s linear infinite;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    @keyframes fallback-turntable {
+      from {
+        transform: translate(-50%, -50%) rotate(90deg);
+      }
+      to {
+        transform: translate(-50%, -50%) rotate(450deg);
+      }
+    }
+
     #status {
       position: fixed;
       left: 50%;
@@ -61,6 +84,18 @@
   <script>
     (() => {
       const status = document.getElementById('status');
+      const showFallback = reason => {
+        document.body.dataset.modelLoaded = 'fallback';
+        document.body.dataset.modelFallback = reason;
+        if (status) status.remove();
+        const existing = document.getElementById('fallback-car');
+        if (existing) return;
+        const image = document.createElement('img');
+        image.id = 'fallback-car';
+        image.alt = 'Samantha 2025-2026 ICE Car';
+        image.src = 'media/fsae-car-fallback.png?v=1';
+        document.body.appendChild(image);
+      };
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 10000);
       let renderer = null;
@@ -115,9 +150,7 @@
         });
       } catch (error) {
         console.error('Cougar Racing WebGL failed to start', error);
-        const message = error && error.message ? error.message : String(error);
-        status.textContent = `3D renderer failed: ${message.slice(0, 72)}`;
-        document.body.dataset.modelError = 'true';
+        showFallback('webgl-unavailable');
         return;
       }
       const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -223,8 +256,7 @@
         },
         error => {
           console.error('Cougar Racing GLB failed to load', error);
-          status.textContent = '3D model failed to load';
-          document.body.dataset.modelError = 'true';
+          showFallback('glb-load-failed');
         }
       );
 
