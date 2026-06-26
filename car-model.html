@@ -66,7 +66,7 @@
       let renderer = null;
       try {
         const canvas = document.createElement('canvas');
-        const attributes = {
+        const preferredAttributes = {
           alpha: true,
           antialias: false,
           depth: true,
@@ -75,14 +75,37 @@
           powerPreference: 'default',
           failIfMajorPerformanceCaveat: false
         };
-        const context =
-          canvas.getContext('webgl2', attributes) ||
-          canvas.getContext('webgl', attributes) ||
-          canvas.getContext('experimental-webgl', attributes);
+        const lightAttributes = {
+          alpha: true,
+          antialias: false,
+          depth: true
+        };
+        const contextRequests = [
+          ['webgl2', preferredAttributes],
+          ['webgl', preferredAttributes],
+          ['experimental-webgl', preferredAttributes],
+          ['webgl2', lightAttributes],
+          ['webgl', lightAttributes],
+          ['experimental-webgl', lightAttributes],
+          ['webgl2'],
+          ['webgl'],
+          ['experimental-webgl']
+        ];
+        let context = null;
+        let contextName = '';
+        for (const request of contextRequests) {
+          try {
+            context = canvas.getContext(request[0], request[1]);
+            if (context) {
+              contextName = request[0];
+              break;
+            }
+          } catch (_) {}
+        }
         if (!context) {
           throw new Error('No WebGL context returned by the browser');
         }
-        document.body.dataset.webglContext = context.constructor && context.constructor.name ? context.constructor.name : 'webgl';
+        document.body.dataset.webglContext = context.constructor && context.constructor.name ? context.constructor.name : contextName;
         renderer = new THREE.WebGLRenderer({
           canvas,
           context,
