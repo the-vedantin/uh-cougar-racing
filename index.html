@@ -1463,7 +1463,7 @@ Competitions challenge teams of university undergraduate and graduate students t
 </script>
 <script id="codex-car-3d-script">
 (() => {
-  const modelSrc = 'media/fsae-car-26.glb?v=3';
+  const modelSrc = 'media/fsae-car-26-web.glb?v=1';
   const anchorSelector = '#comp-m3d4saki';
   const modelRowSelector = '#comp-m3d4sakr12';
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
@@ -1646,6 +1646,10 @@ Competitions challenge teams of university undergraduate and graduate students t
       if (!window.THREE) await loadScript('scripts/vendor/three.min.js');
       if (!THREE.OrbitControls) await loadScript('scripts/vendor/OrbitControls.js');
       if (!THREE.GLTFLoader) await loadScript('scripts/vendor/GLTFLoader.js');
+      if (!window.MeshoptDecoder) await loadScript('scripts/vendor/meshopt_decoder.js');
+      if (!window.MeshoptDecoder || !MeshoptDecoder.supported) {
+        throw new Error('Meshopt decoder unavailable');
+      }
 
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(28, 1, 0.1, 10000);
@@ -1692,7 +1696,9 @@ Competitions challenge teams of university undergraduate and graduate students t
       resizeRenderer();
       animate();
 
-      new THREE.GLTFLoader().load(
+      const loader = new THREE.GLTFLoader();
+      loader.setMeshoptDecoder(MeshoptDecoder);
+      loader.load(
         modelSrc,
         gltf => {
           model = gltf.scene || gltf.scenes[0];
