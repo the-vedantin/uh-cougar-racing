@@ -897,6 +897,15 @@ body { --wix-ads-height: 0px !important; }
   width: 100% !important;
   height: 100% !important;
 }
+#codex-car-model-element {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  --poster-color: transparent;
+}
 #codex-car-model-viewer[data-loaded="true"] canvas {
   opacity: 1 !important;
 }
@@ -1466,6 +1475,7 @@ Competitions challenge teams of university undergraduate and graduate students t
   }
 })();
 </script>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 <script src="scripts/vendor/three.min.js"></script>
 <script src="scripts/vendor/OrbitControls.js"></script>
 <script src="scripts/vendor/GLTFLoader.js"></script>
@@ -1482,6 +1492,7 @@ Competitions challenge teams of university undergraduate and graduate students t
   let controls = null;
   let model = null;
   let placementQueued = false;
+  let usingModelViewer = false;
 
   const ensureViewer = () => {
     if (viewer && document.body.contains(viewer)) return viewer;
@@ -1500,6 +1511,32 @@ Competitions challenge teams of university undergraduate and graduate students t
       fallback.decoding = 'async';
       fallback.loading = 'eager';
       viewer.appendChild(fallback);
+    }
+    let modelElement = viewer.querySelector('#codex-car-model-element');
+    if (!modelElement && 'customElements' in window) {
+      modelElement = document.createElement('model-viewer');
+      modelElement.id = 'codex-car-model-element';
+      modelElement.setAttribute('src', modelSrc);
+      modelElement.setAttribute('poster', 'media/fsae-car-top.png?v=1');
+      modelElement.setAttribute('camera-controls', '');
+      modelElement.setAttribute('auto-rotate', '');
+      modelElement.setAttribute('auto-rotate-delay', '0');
+      modelElement.setAttribute('rotation-per-second', '18deg');
+      modelElement.setAttribute('interaction-prompt', 'none');
+      modelElement.setAttribute('shadow-intensity', '0');
+      modelElement.setAttribute('exposure', '1.2');
+      modelElement.setAttribute('camera-orbit', '45deg 65deg auto');
+      modelElement.setAttribute('field-of-view', '30deg');
+      modelElement.addEventListener('load', () => {
+        viewer.dataset.loaded = 'true';
+        delete viewer.dataset.loadError;
+        const fallback = viewer.querySelector('#codex-car-model-fallback');
+        if (fallback) fallback.style.setProperty('opacity', '0', 'important');
+      });
+      modelElement.addEventListener('error', () => {
+        if (!renderer) viewer.dataset.loadError = 'true';
+      });
+      viewer.appendChild(modelElement);
     }
     let caption = viewer.querySelector('#codex-car-model-caption');
     if (!caption) {
@@ -1595,6 +1632,28 @@ Competitions challenge teams of university undergraduate and graduate students t
 
   const initViewer = () => {
     const el = ensureViewer();
+    const modelElement = el.querySelector('#codex-car-model-element');
+    if (modelElement) {
+      usingModelViewer = true;
+      positionViewer();
+      [250, 1000, 2500].forEach(delay => setTimeout(queuePlacement, delay));
+      window.addEventListener('resize', queuePlacement, { passive: true });
+      window.addEventListener('scroll', queuePlacement, { passive: true });
+      window.addEventListener('pageshow', queuePlacement);
+      new MutationObserver(queuePlacement).observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'data-motion-enter']
+      });
+      setTimeout(() => {
+        if (el.dataset.loaded !== 'true') {
+          const fallback = el.querySelector('#codex-car-model-fallback');
+          if (fallback) fallback.style.setProperty('opacity', '1', 'important');
+        }
+      }, 3500);
+      return;
+    }
     if (!window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) {
       el.dataset.loadError = 'true';
       return;
