@@ -890,7 +890,8 @@ body { --wix-ads-height: 0px !important; }
 #codex-car-3d-viewer.is-dragging {
   cursor: grabbing;
 }
-#codex-car-model-canvas {
+#codex-car-model-canvas,
+#codex-car-model-frame {
   display: block;
   background: transparent;
   width: 100% !important;
@@ -898,6 +899,7 @@ body { --wix-ads-height: 0px !important; }
   position: relative;
   z-index: 1;
   opacity: 1;
+  border: 0;
 }
 #codex-car-model-status {
   position: absolute;
@@ -1641,6 +1643,27 @@ Competitions challenge teams of university undergraduate and graduate students t
     if (loadStarted) return;
     loadStarted = true;
     const el = ensureViewer();
+    const existingCanvas = el.querySelector('#codex-car-model-canvas');
+    if (existingCanvas) existingCanvas.remove();
+    let frame = el.querySelector('#codex-car-model-frame');
+    if (!frame) {
+      frame = document.createElement('iframe');
+      frame.id = 'codex-car-model-frame';
+      frame.title = 'Samantha 2025-2026 ICE Car 3D model';
+      frame.loading = 'eager';
+      frame.setAttribute('allow', 'fullscreen');
+      frame.setAttribute('allowtransparency', 'true');
+      el.insertBefore(frame, el.firstChild);
+    }
+    const frameSrc = 'car-model.html?v=isolated-webgl-1';
+    if (frame.getAttribute('src') !== frameSrc) {
+      frame.src = frameSrc;
+    }
+    el.dataset.modelLoaded = 'iframe';
+    el.dataset.modelSource = frameSrc;
+    delete el.dataset.modelError;
+    hideStatus();
+    return;
 
     try {
       if (!window.THREE) await loadScript('scripts/vendor/three.min.js');
