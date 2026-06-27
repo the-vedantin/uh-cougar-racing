@@ -1,14 +1,13 @@
 (function () {
   var BREAKPOINT = 1100;
   var ALWAYS_RESPONSIVE = {
-    'inquiry-services-page.html': true,
-    'sponsors.html': true
+    'inquiry-services-page.html': true
   };
   var mounted = false;
 
   var nav = [
     ['Sub-Teams', 'sub-team-page.html'],
-    ['Contact', 'inquiry-services-page.html#contact'],
+    ['Contact', 'index.html#contact'],
     ['Sponsors', 'sponsors.html'],
     ['Legacy', 'news.html'],
     ['Join Us', 'https://linktr.ee/uhcougarracing?utm_source=linktree_profile_share&ltsid=59ce8030-b2ec-49c5-9318-39d390043736']
@@ -137,7 +136,7 @@
     return [
       '<section class="crp-section crp-sponsors-section"><div class="crp-shell">',
       '  <h2>Support Future Engineers</h2>',
-      '  <p>If you are interested in sponsoring us, please refer to our sponsorship packet below and <a class="crp-link" href="inquiry-services-page.html#contact">contact us here.</a></p>',
+      '  <p>If you are interested in sponsoring us, please refer to our sponsorship packet below and <a class="crp-link" href="index.html#contact">contact us here.</a></p>',
       '  <h2 class="crp-sponsor-heading">Thank You To Our Sponsors</h2>',
       '  <div class="crp-sponsor-grid">' + logos + '</div>',
       '</div></section>'
