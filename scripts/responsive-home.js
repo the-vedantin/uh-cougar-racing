@@ -10,7 +10,7 @@
       '    <a href="index.html" aria-label="Cougar Racing home"><img class="cr-logo" src="media/logo-banner.png" alt="Cougar Racing"></a>',
       '    <nav class="cr-nav" aria-label="Site">',
       '      <a href="sub-team-page.html">Sub-Teams</a>',
-      '      <a href="inquiry-services-page.html">Contact</a>',
+      '      <a href="inquiry-services-page.html#contact">Contact</a>',
       '      <a href="sponsors.html">Sponsors</a>',
       '      <a href="news.html">Legacy</a>',
       '      <a href="https://linktr.ee/uhcougarracing?utm_source=linktree_profile_share&amp;ltsid=59ce8030-b2ec-49c5-9318-39d390043736">Join Us</a>',

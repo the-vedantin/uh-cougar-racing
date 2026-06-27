@@ -2,7 +2,7 @@
   display: none;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 9999px) {
   html.cr-responsive-page-active,
   html.cr-responsive-page-active body {
     min-width: 0 !important;
@@ -175,6 +175,10 @@
     align-items: center;
   }
 
+  .crp-sponsor-heading {
+    margin-top: 34px !important;
+  }
+
   .crp-sponsor {
     min-height: 108px;
     display: grid;
@@ -197,6 +201,51 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     gap: 18px;
+  }
+
+  .crp-contact-form {
+    display: grid;
+    gap: 14px;
+    max-width: 680px;
+    margin-top: 34px;
+  }
+
+  .crp-contact-form label {
+    display: grid;
+    gap: 8px;
+    color: #fffffe;
+    -webkit-text-fill-color: #fffffe;
+    font: 700 14px/1.25 Arial, Helvetica, sans-serif;
+  }
+
+  .crp-contact-form input,
+  .crp-contact-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 254, 0.35);
+    border-radius: 4px;
+    padding: 12px 13px;
+    color: #fffffe;
+    -webkit-text-fill-color: #fffffe;
+    background: #050505;
+    font: 400 16px/1.4 Arial, Helvetica, sans-serif;
+  }
+
+  .crp-contact-form button {
+    width: max-content;
+    min-width: 132px;
+    border: 0;
+    border-radius: 999px;
+    padding: 13px 24px;
+    color: #000;
+    -webkit-text-fill-color: #000;
+    background: #fff9d9;
+    font: 700 14px/1 Arial, Helvetica, sans-serif;
+    cursor: pointer;
+  }
+
+  .crp-contact-status {
+    min-height: 1.5em;
   }
 
   .crp-footer {

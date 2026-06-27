@@ -1,10 +1,14 @@
 (function () {
   var BREAKPOINT = 1100;
+  var ALWAYS_RESPONSIVE = {
+    'inquiry-services-page.html': true,
+    'sponsors.html': true
+  };
   var mounted = false;
 
   var nav = [
     ['Sub-Teams', 'sub-team-page.html'],
-    ['Contact', 'inquiry-services-page.html'],
+    ['Contact', 'inquiry-services-page.html#contact'],
     ['Sponsors', 'sponsors.html'],
     ['Legacy', 'news.html'],
     ['Join Us', 'https://linktr.ee/uhcougarracing?utm_source=linktree_profile_share&ltsid=59ce8030-b2ec-49c5-9318-39d390043736']
@@ -131,12 +135,10 @@
       return '<div class="crp-sponsor"><img src="' + esc(logo[1]) + '" alt="' + esc(logo[0]) + '"></div>';
     }).join('');
     return [
-      '<section class="crp-section"><div class="crp-shell">',
+      '<section class="crp-section crp-sponsors-section"><div class="crp-shell">',
       '  <h2>Support Future Engineers</h2>',
-      '  <p>If you are interested in sponsoring us, please refer to our sponsorship packet and contact us here.</p>',
-      '</div></section>',
-      '<section class="crp-section"><div class="crp-shell">',
-      '  <h2>Thank You To Our Sponsors</h2>',
+      '  <p>If you are interested in sponsoring us, please refer to our sponsorship packet below and <a class="crp-link" href="inquiry-services-page.html#contact">contact us here.</a></p>',
+      '  <h2 class="crp-sponsor-heading">Thank You To Our Sponsors</h2>',
       '  <div class="crp-sponsor-grid">' + logos + '</div>',
       '</div></section>'
     ].join('');
@@ -157,16 +159,59 @@
 
   function contactPage() {
     return [
-      '<section class="crp-section"><div class="crp-shell crp-contact-grid">',
-      '  <article><h2>Email</h2><p><a class="crp-link" href="mailto:info.uhfsae@gmail.com">info.uhfsae@gmail.com</a></p></article>',
-      '  <article><h2>Address</h2><p>4465 University Drive, Mailbox 451 Houston, TX 77204</p></article>',
-      '  <article><h2>Join</h2><p><a class="crp-link" href="https://linktr.ee/uhcougarracing?utm_source=linktree_profile_share&amp;ltsid=59ce8030-b2ec-49c5-9318-39d390043736">Open the Cougar Racing Linktree</a></p></article>',
+      '<section id="contact" class="crp-section crp-contact-section"><div class="crp-shell">',
+      '  <div class="crp-contact-grid">',
+      '    <article><h2>Email</h2><p><a class="crp-link" href="mailto:info.uhfsae@gmail.com">info.uhfsae@gmail.com</a></p></article>',
+      '    <article><h2>Address</h2><p>4465 University Drive, Mailbox 451 Houston, TX 77204</p></article>',
+      '    <article><h2>Join</h2><p><a class="crp-link" href="https://linktr.ee/uhcougarracing?utm_source=linktree_profile_share&amp;ltsid=59ce8030-b2ec-49c5-9318-39d390043736">Open the Cougar Racing Linktree</a></p></article>',
+      '  </div>',
+      '  <form id="crp-contact-form" class="crp-contact-form">',
+      '    <label>Name<input name="name" autocomplete="name" required></label>',
+      '    <label>Email<input name="email" type="email" autocomplete="email" required></label>',
+      '    <label>Message<textarea name="message" rows="5" required></textarea></label>',
+      '    <button type="submit">Send Email</button>',
+      '    <p id="crp-contact-status" class="crp-contact-status" aria-live="polite"></p>',
+      '  </form>',
       '</div></section>'
     ].join('');
   }
 
   function active() {
-    return Boolean(currentKey()) && (window.innerWidth || document.documentElement.clientWidth || 0) <= BREAKPOINT;
+    var key = currentKey();
+    if (!key) return false;
+    if (ALWAYS_RESPONSIVE[key]) return true;
+    return (window.innerWidth || document.documentElement.clientWidth || 0) <= BREAKPOINT;
+  }
+
+  function handleContactSubmit(event) {
+    if (!event.target || event.target.id !== 'crp-contact-form') return;
+    event.preventDefault();
+    var form = event.target;
+    var data = new FormData(form);
+    var name = data.get('name') || '';
+    var email = data.get('email') || '';
+    var message = data.get('message') || '';
+    var body = [
+      'Name: ' + name,
+      'Email: ' + email,
+      '',
+      String(message)
+    ].join('\n');
+    var subject = 'Cougar Racing website inquiry';
+    var mailto = 'mailto:info.uhfsae@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    var status = document.getElementById('crp-contact-status');
+    if (status) {
+      status.textContent = 'Opening your email app to send the message.';
+    }
+    window.location.href = mailto;
+  }
+
+  function scrollToHash() {
+    if (window.location.hash !== '#contact') return;
+    var target = document.getElementById('contact');
+    if (target) {
+      target.scrollIntoView({ block: 'start' });
+    }
   }
 
   function mount() {
@@ -188,10 +233,14 @@
       document.body.style.minHeight = '';
       document.documentElement.style.setProperty('--codex-site-scale', '1');
     }
+    if (isActive) {
+      setTimeout(scrollToHash, 50);
+    }
   }
 
   function start() {
     apply();
+    document.addEventListener('submit', handleContactSubmit);
     window.addEventListener('resize', apply, { passive: true });
     window.addEventListener('orientationchange', apply, { passive: true });
     setTimeout(apply, 100);
