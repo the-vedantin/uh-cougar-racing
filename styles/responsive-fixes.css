@@ -1,0 +1,41 @@
+@media (max-width: 979px) {
+  html,
+  body {
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    background: #000 !important;
+  }
+
+  body.codex-responsive-scale {
+    width: 100% !important;
+  }
+
+  body.codex-responsive-scale #SITE_CONTAINER {
+    width: 980px !important;
+    min-width: 980px !important;
+    max-width: none !important;
+    transform: scale(var(--codex-site-scale, 1));
+    transform-origin: 0 0;
+  }
+
+  body.codex-responsive-scale #site-root,
+  body.codex-responsive-scale #masterPage,
+  body.codex-responsive-scale #PAGES_CONTAINER,
+  body.codex-responsive-scale #SITE_PAGES,
+  body.codex-responsive-scale #SITE_HEADER,
+  body.codex-responsive-scale #SITE_HEADER_WRAPPER,
+  body.codex-responsive-scale #SITE_FOOTER,
+  body.codex-responsive-scale #SITE_FOOTER_WRAPPER,
+  body.codex-responsive-scale [id^="pageBackground_"],
+  body.codex-responsive-scale [id^="Containert"] {
+    width: 980px !important;
+    min-width: 980px !important;
+    max-width: none !important;
+  }
+
+  body.codex-responsive-scale [data-mesh-id="SITE_HEADERinlineContent"],
+  body.codex-responsive-scale [data-mesh-id="SITE_HEADERinlineContent-gridContainer"] {
+    width: 980px !important;
+    min-width: 980px !important;
+  }
+}

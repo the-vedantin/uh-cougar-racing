@@ -1012,11 +1012,13 @@ body { --wix-ads-height: 0px !important; }
 }
 @media (max-width: 767px) {
   #codex-car-3d-viewer {
-    width: 340px;
-    height: 340px;
+    width: min(340px, calc(100vw - 32px));
+    height: min(340px, calc(100vw - 32px));
   }
 }
 </style>
+  <link rel="stylesheet" href="styles/responsive-fixes.css?v=mobile-mac-1">
+  <script defer src="scripts/responsive-fixes.js?v=mobile-mac-1"></script>
 </head>
 <body class='' >
 <script type="text/javascript">
@@ -1545,17 +1547,28 @@ Competitions challenge teams of university undergraduate and graduate students t
     const modelRow = document.querySelector(modelRowSelector);
     const modelRowRect = modelRow ? modelRow.getBoundingClientRect() : anchorRect;
     const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-    const minSize = viewportWidth < 768 ? 300 : 480;
-    const maxSize = viewportWidth < 768 ? 380 : 640;
-    const size = Math.round(clamp(viewportWidth * 0.42, minSize, maxSize));
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const mobile = viewportWidth < 900;
+    const minSize = mobile ? Math.min(280, viewportWidth - 48) : (viewportWidth < 1180 ? 380 : 440);
+    const maxSize = mobile
+      ? Math.min(340, viewportWidth - 32)
+      : Math.min(640, Math.max(420, viewportHeight - 190));
+    const heightAwareSize = mobile
+      ? Math.min(viewportWidth * 0.78, viewportHeight * 0.38)
+      : Math.min(viewportWidth * 0.42, viewportHeight * 0.62);
+    const size = Math.round(clamp(heightAwareSize, minSize, maxSize));
     const minLeft = 16;
     const maxLeft = Math.max(minLeft, viewportWidth - size - 16);
     const preferredCenterX = viewportWidth * 0.78;
     let left = clamp(preferredCenterX - size / 2, minLeft, maxLeft);
     let top = modelRowRect.top + modelRowRect.height / 2 - size / 2;
-    if (viewportWidth < 900) {
-      left = clamp(anchorRect.left + anchorRect.width - size, minLeft, maxLeft);
-      top = anchorRect.bottom + 16;
+    if (mobile) {
+      left = clamp((viewportWidth - size) / 2, minLeft, maxLeft);
+      top = anchorRect.bottom + 14;
+    } else {
+      const topMin = 78;
+      const topMax = Math.max(topMin, viewportHeight - size - 32);
+      top = clamp(top, topMin, topMax);
     }
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;
