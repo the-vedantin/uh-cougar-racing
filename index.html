@@ -1017,8 +1017,8 @@ body { --wix-ads-height: 0px !important; }
   }
 }
 </style>
-  <link rel="stylesheet" href="styles/responsive-fixes.css?v=mobile-mac-1">
-  <script defer src="scripts/responsive-fixes.js?v=mobile-mac-1"></script>
+  <link rel="stylesheet" href="styles/responsive-fixes.css?v=mobile-stack-2">
+  <script defer src="scripts/responsive-fixes.js?v=mobile-stack-2"></script>
 </head>
 <body class='' >
 <script type="text/javascript">
@@ -1470,6 +1470,17 @@ Competitions challenge teams of university undergraduate and graduate students t
   const modelSrc = 'media/fsae-car-26-web.glb?v=1';
   const anchorSelector = '#comp-m3d4saki';
   const modelRowSelector = '#comp-m3d4sakr12';
+  const missionSectionSelector = '#comp-m3d5tcc22';
+  const nextSectionSelector = '#comp-mhtkzc3w';
+  const textSelectors = [
+    '#comp-m3d4sakl',
+    '#comp-m3d4sakm4',
+    '#comp-m3d4sakn',
+    '#comp-m3d4sakw13',
+    '#comp-mhogwsc7',
+    '#comp-m3n1p859',
+    '#comp-m3n1p85d17'
+  ];
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   let viewer = null;
   let placementQueued = false;
@@ -1534,6 +1545,38 @@ Competitions challenge teams of university undergraduate and graduate students t
     if (status) status.remove();
   };
 
+  const getSiteScale = () => {
+    const value = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--codex-site-scale'));
+    return Number.isFinite(value) && value > 0 ? value : 1;
+  };
+
+  const clearMobileModelSpace = section => {
+    if (!section || section.dataset.codexMobileModelSpace !== 'on') return;
+    section.style.height = '';
+    section.style.minHeight = '';
+    delete section.dataset.codexMobileModelSpace;
+  };
+
+  const getTextBounds = () => {
+    const bounds = textSelectors
+      .map(selector => document.querySelector(selector))
+      .filter(Boolean)
+      .map(element => element.getBoundingClientRect())
+      .filter(rect => rect.width > 0 && rect.height > 0);
+    if (!bounds.length) return null;
+    return bounds.reduce((acc, rect) => ({
+      left: Math.min(acc.left, rect.left),
+      top: Math.min(acc.top, rect.top),
+      right: Math.max(acc.right, rect.right),
+      bottom: Math.max(acc.bottom, rect.bottom)
+    }), {
+      left: bounds[0].left,
+      top: bounds[0].top,
+      right: bounds[0].right,
+      bottom: bounds[0].bottom
+    });
+  };
+
   const positionViewer = () => {
     placementQueued = false;
     const el = ensureViewer();
@@ -1543,6 +1586,8 @@ Competitions challenge teams of university undergraduate and graduate students t
       return;
     }
     el.hidden = false;
+    const missionSection = document.querySelector(missionSectionSelector);
+    clearMobileModelSpace(missionSection);
     const anchorRect = anchor.getBoundingClientRect();
     const modelRow = document.querySelector(modelRowSelector);
     const modelRowRect = modelRow ? modelRow.getBoundingClientRect() : anchorRect;
@@ -1562,10 +1607,42 @@ Competitions challenge teams of university undergraduate and graduate students t
     const preferredCenterX = viewportWidth * 0.78;
     let left = clamp(preferredCenterX - size / 2, minLeft, maxLeft);
     let top = modelRowRect.top + modelRowRect.height / 2 - size / 2;
-    if (mobile) {
-      left = clamp((viewportWidth - size) / 2, minLeft, maxLeft);
-      top = anchorRect.bottom + 14;
+    const textBounds = getTextBounds();
+    const gap = 5;
+    const responsiveWidth = viewportWidth <= 1024 || document.body.classList.contains('codex-responsive-scale');
+    let stackBelow = false;
+    if (responsiveWidth && textBounds) {
+      const nearestSideLeft = textBounds.right + gap;
+      if (left < nearestSideLeft) {
+        if (nearestSideLeft + size + 16 <= viewportWidth) {
+          left = nearestSideLeft;
+        } else {
+          stackBelow = true;
+        }
+      }
     }
+    if (stackBelow && textBounds) {
+      top = textBounds.bottom + 16;
+      left = clamp((viewportWidth - size) / 2, minLeft, maxLeft);
+    } else if (mobile) {
+      left = clamp(left, minLeft, maxLeft);
+      top = modelRowRect.top + modelRowRect.height / 2 - size / 2;
+    }
+    if (stackBelow && missionSection) {
+      const nextSection = document.querySelector(nextSectionSelector);
+      const nextRect = nextSection ? nextSection.getBoundingClientRect() : null;
+      const neededBottom = top + size + 28;
+      const visibleExtra = nextRect ? Math.max(0, neededBottom - nextRect.top) : 0;
+      if (visibleExtra > 0) {
+        const baseHeight = missionSection.offsetHeight;
+        const extraHeight = Math.ceil(visibleExtra / getSiteScale());
+        const newHeight = baseHeight + extraHeight;
+        missionSection.style.height = `${newHeight}px`;
+        missionSection.style.minHeight = `${newHeight}px`;
+        missionSection.dataset.codexMobileModelSpace = 'on';
+      }
+    }
+    el.dataset.mobilePlacement = stackBelow ? 'below' : 'side';
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;
     el.style.left = `${Math.round(window.scrollX + left)}px`;

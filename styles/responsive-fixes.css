@@ -8,14 +8,23 @@
 
   body.codex-responsive-scale {
     width: 100% !important;
+    max-width: 100vw !important;
   }
 
   body.codex-responsive-scale #SITE_CONTAINER {
     width: 980px !important;
     min-width: 980px !important;
     max-width: none !important;
-    transform: scale(var(--codex-site-scale, 1));
+    zoom: var(--codex-site-scale, 1);
+    transform: none !important;
     transform-origin: 0 0;
+  }
+
+  @supports not (zoom: 1) {
+    body.codex-responsive-scale #SITE_CONTAINER {
+      zoom: 1;
+      transform: scale(var(--codex-site-scale, 1)) !important;
+    }
   }
 
   body.codex-responsive-scale #site-root,

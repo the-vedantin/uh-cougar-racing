@@ -20,7 +20,15 @@
     scheduled = false;
     if (!document.body) return;
 
-    var viewportWidth = window.innerWidth || document.documentElement.clientWidth || DESIGN_WIDTH;
+    var viewportWidth = Math.max(
+      window.innerWidth || 0,
+      document.documentElement.clientWidth || 0,
+      window.visualViewport && window.visualViewport.width ? window.visualViewport.width : 0,
+      DESIGN_WIDTH
+    );
+    if (viewportWidth === DESIGN_WIDTH && window.innerWidth && window.innerWidth < DESIGN_WIDTH) {
+      viewportWidth = window.innerWidth;
+    }
     var scale = viewportWidth < DESIGN_WIDTH ? viewportWidth / DESIGN_WIDTH : 1;
     document.documentElement.style.setProperty('--codex-site-scale', String(scale));
 
