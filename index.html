@@ -1565,10 +1565,6 @@ Competitions challenge teams of university undergraduate and graduate students t
     if (mobile) {
       left = clamp((viewportWidth - size) / 2, minLeft, maxLeft);
       top = anchorRect.bottom + 14;
-    } else {
-      const topMin = 78;
-      const topMax = Math.max(topMin, viewportHeight - size - 32);
-      top = clamp(top, topMin, topMax);
     }
     el.style.width = `${size}px`;
     el.style.height = `${size}px`;
