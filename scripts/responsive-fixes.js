@@ -19,6 +19,15 @@
   function applyScale() {
     scheduled = false;
     if (!document.body) return;
+    if (
+      document.documentElement.classList.contains('cr-responsive-home-active') ||
+      document.documentElement.classList.contains('cr-responsive-page-active')
+    ) {
+      document.documentElement.style.setProperty('--codex-site-scale', '1');
+      document.body.classList.remove('codex-responsive-scale');
+      document.body.style.minHeight = '';
+      return;
+    }
 
     var viewportWidth = Math.max(
       window.innerWidth || 0,
