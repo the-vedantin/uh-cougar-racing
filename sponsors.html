@@ -412,6 +412,32 @@ body { --wix-ads-height: 0px !important; }
   padding: 6px 24px 88px;
   font-family: helvetica-w01-roman, helvetica, sans-serif;
 }
+#codex-sponsor-packet-section {
+  background: #000;
+  color: #fffffe;
+  padding: 16px 24px 36px;
+  text-align: center;
+  font-family: helvetica-w01-roman, helvetica, sans-serif;
+}
+#codex-sponsor-packet-section .codex-sponsor-packet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 28px;
+  border: 1px solid #fffffe;
+  border-radius: 999px;
+  color: #fffffe;
+  -webkit-text-fill-color: #fffffe;
+  text-decoration: none;
+  font: 700 16px/1.2 helvetica-w01-roman, helvetica, sans-serif;
+}
+#codex-sponsor-packet-section .codex-sponsor-packet:hover,
+#codex-sponsor-packet-section .codex-sponsor-packet:focus-visible {
+  background: #8b0000;
+  border-color: #8b0000;
+  outline: none;
+}
 #codex-sponsors-static .codex-sponsors-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -440,6 +466,9 @@ body { --wix-ads-height: 0px !important; }
   }
 }
 @media (max-width: 560px) {
+  #codex-sponsor-packet-section {
+    padding: 12px 18px 28px;
+  }
   #codex-sponsors-static {
     padding: 6px 18px 64px;
   }
@@ -453,13 +482,18 @@ body { --wix-ads-height: 0px !important; }
     display: none !important;
   }
   [data-mesh-id=ContaineropnytinlineContent-gridContainer] > #comp-mhuvh1yb {
+    grid-area: 5 / 1 / 6 / 2 !important;
+  }
+  [data-mesh-id=ContaineropnytinlineContent-gridContainer] > #codex-sponsor-packet-section {
     grid-area: 4 / 1 / 5 / 2 !important;
+    width: 100%;
+    margin: 0;
   }
   [data-mesh-id=comp-mhuvh1ybinlineContent-gridContainer] {
     min-height: 132px !important;
   }
   #codex-sponsors-static {
-    grid-area: 5 / 1 / 6 / 2 !important;
+    grid-area: 6 / 1 / 7 / 2 !important;
     width: 100%;
     margin: 0;
     padding-top: 0;
@@ -470,10 +504,10 @@ body { --wix-ads-height: 0px !important; }
 }
 </style>
   <link rel="stylesheet" href="styles/responsive-fixes.css?v=mobile-stack-2">
-  <link rel="stylesheet" href="styles/responsive-pages.css?v=responsive-pages-1">
+  <link rel="stylesheet" href="styles/responsive-pages.css?v=responsive-pages-2">
   <script defer src="scripts/site-links.js?v=join-square-1"></script>
   <script defer src="scripts/responsive-fixes.js?v=mobile-stack-2"></script>
-  <script defer src="scripts/responsive-pages.js?v=responsive-pages-3"></script>
+  <script defer src="scripts/responsive-pages.js?v=responsive-pages-4"></script>
 </head>
 <body class='' >
 <script type="text/javascript">
@@ -874,6 +908,7 @@ body { --wix-ads-height: 0px !important; }
 </script>
 <script id="codex-static-sponsors-script">
 (() => {
+  const packetUrl = 'media/sponsorship-packet-2026-2027.pdf';
   const sponsors = [
     ['Kratz Coffee', 'media/sponsor-kratz-coffee.png'],
     ['Fluor', 'media/sponsor-fluor.png'],
@@ -890,6 +925,27 @@ body { --wix-ads-height: 0px !important; }
     ['Katy Hydraulics', 'media/sponsor-katy-hydraulics.png'],
     ['Ironrod Steel Co.', 'media/sponsor-ironrod-steel.png']
   ];
+
+  const renderPacket = () => {
+    if (document.getElementById('codex-sponsor-packet-section')) return true;
+    const headingSection = document.getElementById('comp-mhuvh1yb');
+    if (!headingSection) return false;
+
+    const section = document.createElement('section');
+    section.id = 'codex-sponsor-packet-section';
+    section.setAttribute('aria-label', 'Sponsorship packet');
+
+    const link = document.createElement('a');
+    link.className = 'codex-sponsor-packet';
+    link.href = packetUrl;
+    link.target = '_blank';
+    link.rel = 'noreferrer noopener';
+    link.textContent = 'Download Sponsorship Packet';
+
+    section.appendChild(link);
+    headingSection.insertAdjacentElement('beforebegin', section);
+    return true;
+  };
 
   const renderSponsors = () => {
     if (document.getElementById('codex-sponsors-static')) return true;
@@ -923,8 +979,12 @@ body { --wix-ads-height: 0px !important; }
   };
 
   const start = () => {
+    renderPacket();
     if (renderSponsors()) return;
-    [100, 500, 1200, 2500].forEach(delay => setTimeout(renderSponsors, delay));
+    [100, 500, 1200, 2500].forEach(delay => {
+      setTimeout(renderPacket, delay);
+      setTimeout(renderSponsors, delay);
+    });
   };
 
   if (document.readyState === 'loading') {
