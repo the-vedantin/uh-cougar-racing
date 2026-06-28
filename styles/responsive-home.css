@@ -263,6 +263,75 @@
     max-width: 720px;
   }
 
+  .cr-contact a {
+    color: #fffffe;
+    -webkit-text-fill-color: #fffffe;
+    text-decoration: underline;
+  }
+
+  .cr-contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-top: 28px;
+  }
+
+  .cr-contact-grid h3 {
+    margin: 0 0 10px;
+    color: #c8102e;
+    -webkit-text-fill-color: #c8102e;
+    font: 400 24px/1.25 Questrial, Arial, Helvetica, sans-serif;
+  }
+
+  .cr-contact-form {
+    display: grid;
+    gap: 16px;
+    margin-top: 34px;
+  }
+
+  .cr-contact-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .cr-contact-form label {
+    display: grid;
+    gap: 8px;
+    color: #fffffe;
+    -webkit-text-fill-color: #fffffe;
+    font: 700 14px/1.25 Arial, Helvetica, sans-serif;
+  }
+
+  .cr-contact-form input,
+  .cr-contact-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 254, 0.78);
+    border-radius: 0;
+    padding: 12px 0;
+    color: #fffffe;
+    -webkit-text-fill-color: #fffffe;
+    background: transparent;
+    font: 400 16px/1.35 Arial, Helvetica, sans-serif;
+  }
+
+  .cr-contact-form textarea {
+    min-height: 132px;
+    resize: vertical;
+  }
+
+  .cr-contact-form button {
+    min-height: 46px;
+    border: 1px solid #fffffe;
+    border-radius: 999px;
+    color: #fffffe;
+    -webkit-text-fill-color: #fffffe;
+    background: #6d0000;
+    font: 700 14px/1 Arial, Helvetica, sans-serif;
+  }
+
   @media (max-width: 900px) {
     .cr-overview-grid,
     .cr-fsae {
@@ -334,6 +403,10 @@
     .cr-fsae h2,
     .cr-contact h2 {
       font-size: 40px;
+    }
+
+    .cr-contact-fields {
+      grid-template-columns: 1fr;
     }
   }
 
