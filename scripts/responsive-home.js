@@ -2,6 +2,7 @@
   var BREAKPOINT = 1280;
   var mounted = false;
   var iframeLoaded = false;
+  var CONTACT_HASH = '#contact';
 
   function markup() {
     return [
@@ -87,6 +88,32 @@
     return (window.innerWidth || document.documentElement.clientWidth || 0) <= BREAKPOINT;
   }
 
+  function contactTarget() {
+    return document.querySelector('#cr-responsive-home #contact');
+  }
+
+  function scrollToContact() {
+    if (window.location.hash !== CONTACT_HASH || !active()) return;
+    var target = contactTarget();
+    if (target) {
+      target.scrollIntoView({ block: 'start' });
+    }
+  }
+
+  function handleContactClick(event) {
+    var link = event.target && event.target.closest ? event.target.closest('a') : null;
+    if (!link || !active()) return;
+
+    var href = link.getAttribute('href') || '';
+    if (href !== CONTACT_HASH && href !== 'index.html#contact') return;
+
+    event.preventDefault();
+    if (window.location.hash !== CONTACT_HASH) {
+      window.history.pushState(null, '', CONTACT_HASH);
+    }
+    scrollToContact();
+  }
+
   function apply() {
     mount();
     var isActive = active();
@@ -97,11 +124,15 @@
       document.body.style.minHeight = '';
       document.documentElement.style.setProperty('--codex-site-scale', '1');
       ensureModel();
+      setTimeout(scrollToContact, 50);
+      setTimeout(scrollToContact, 300);
     }
   }
 
   function start() {
     apply();
+    document.addEventListener('click', handleContactClick, true);
+    window.addEventListener('hashchange', scrollToContact);
     window.addEventListener('resize', apply, { passive: true });
     window.addEventListener('orientationchange', apply, { passive: true });
     setTimeout(apply, 100);
