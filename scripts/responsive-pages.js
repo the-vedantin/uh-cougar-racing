@@ -10,7 +10,7 @@
     ['Contact', 'index.html#contact'],
     ['Sponsors', 'sponsors.html'],
     ['Legacy', 'news.html'],
-    ['Join Us', 'https://linktr.ee/uhcougarracing?utm_source=linktree_profile_share&ltsid=59ce8030-b2ec-49c5-9318-39d390043736']
+    ['Join Us', 'https://checkout.square.site/merchant/6JR8Q2ZJ112HV/checkout/JTEPKQCKJ5I5P442GVGLZPKZ']
   ];
 
   var sponsorLogos = [
@@ -87,7 +87,8 @@
 
   function navMarkup() {
     return nav.map(function (item) {
-      return '<a href="' + esc(item[1]) + '">' + esc(item[0]) + '</a>';
+      var external = /^https?:\/\//.test(item[1]) ? ' target="_blank" rel="noreferrer noopener"' : '';
+      return '<a href="' + esc(item[1]) + '"' + external + '>' + esc(item[0]) + '</a>';
     }).join('');
   }
 
@@ -162,7 +163,7 @@
       '  <div class="crp-contact-grid">',
       '    <article><h2>Email</h2><p><a class="crp-link" href="mailto:info.uhfsae@gmail.com">info.uhfsae@gmail.com</a></p></article>',
       '    <article><h2>Address</h2><p>4465 University Drive, Mailbox 451 Houston, TX 77204</p></article>',
-      '    <article><h2>Join</h2><p><a class="crp-link" href="https://linktr.ee/uhcougarracing?utm_source=linktree_profile_share&amp;ltsid=59ce8030-b2ec-49c5-9318-39d390043736">Open the Cougar Racing Linktree</a></p></article>',
+      '    <article><h2>Join</h2><p><a class="crp-link" href="https://checkout.square.site/merchant/6JR8Q2ZJ112HV/checkout/JTEPKQCKJ5I5P442GVGLZPKZ" target="_blank" rel="noreferrer noopener">Open the Cougar Racing checkout</a></p></article>',
       '  </div>',
       '  <form id="crp-contact-form" class="crp-contact-form">',
       '    <label>Name<input name="name" autocomplete="name" required></label>',

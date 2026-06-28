@@ -3,6 +3,7 @@
   var CONTACT_EMAIL = 'info.uhfsae@gmail.com';
   var CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzExefPs2Ab1MCmXSIcB3XBKVDtepljINRh1Xd7d13MySmME9bL5nn5dI05PyIIur9Oqw/exec';
   var CONTACT_IFRAME = 'uhcr-contact-target';
+  var JOIN_URL = 'https://checkout.square.site/merchant/6JR8Q2ZJ112HV/checkout/JTEPKQCKJ5I5P442GVGLZPKZ';
 
   function linkText(link) {
     return (link.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -17,11 +18,24 @@
       (/contact us here/.test(text) && /index\.html|inquiry-services-page|^#?$/.test(href));
   }
 
+  function isJoinLink(link) {
+    return linkText(link) === 'join us';
+  }
+
+  function setJoinLink(link) {
+    link.setAttribute('href', JOIN_URL);
+    link.setAttribute('target', '_blank');
+    link.setAttribute('rel', 'noreferrer noopener');
+  }
+
   function fixLinks() {
     var links = document.querySelectorAll('a');
     for (var i = 0; i < links.length; i += 1) {
       if (isContactLink(links[i])) {
         links[i].setAttribute('href', CONTACT_URL);
+      }
+      if (isJoinLink(links[i])) {
+        setJoinLink(links[i]);
       }
     }
   }
@@ -227,6 +241,9 @@
     var link = event.target && event.target.closest ? event.target.closest('a') : null;
     if (link && isContactLink(link)) {
       link.setAttribute('href', CONTACT_URL);
+    }
+    if (link && isJoinLink(link)) {
+      setJoinLink(link);
     }
   }, true);
 
