@@ -919,20 +919,6 @@ body { --wix-ads-height: 0px !important; }
   pointer-events: none;
   white-space: nowrap;
 }
-#codex-car-model-caption {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 8px;
-  z-index: 2;
-  color: rgb(255, 255, 254);
-  -webkit-text-fill-color: rgb(255, 255, 254);
-  font: 14px/1.2 helvetica-w01-roman, helvetica, sans-serif;
-  text-align: center;
-  pointer-events: none;
-  text-shadow: 0 1px 8px #000;
-  white-space: nowrap;
-}
 #comp-mhohiyhd,
 #comp-mhohv8d9 {
   display: none !important;
@@ -1529,13 +1515,6 @@ Competitions challenge teams of university undergraduate and graduate students t
       status.textContent = 'Loading 3D model';
       viewer.appendChild(status);
     }
-    let caption = viewer.querySelector('#codex-car-model-caption');
-    if (!caption) {
-      caption = document.createElement('div');
-      caption.id = 'codex-car-model-caption';
-      caption.textContent = 'Samantha : 2025-2026 ICE Car';
-      viewer.appendChild(caption);
-    }
     if (!viewer.parentElement) document.body.appendChild(viewer);
     return viewer;
   };
@@ -1740,7 +1719,7 @@ Competitions challenge teams of university undergraduate and graduate students t
     if (!frame) {
       frame = document.createElement('iframe');
       frame.id = 'codex-car-model-frame';
-      frame.title = 'Samantha 2025-2026 ICE Car 3D model';
+      frame.title = 'Interactive Cougar Racing 3D car model';
       frame.loading = 'eager';
       frame.setAttribute('allow', 'webgl; fullscreen');
       frame.setAttribute('allowtransparency', 'true');

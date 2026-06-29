@@ -228,14 +228,6 @@
     background: transparent;
   }
 
-  .cr-model-caption {
-    margin: 0;
-    color: #fffffe;
-    -webkit-text-fill-color: #fffffe;
-    text-align: center;
-    font: 400 14px/1.25 Arial, Helvetica, sans-serif;
-  }
-
   .cr-fsae {
     display: grid;
     grid-template-columns: minmax(0, 0.95fr) minmax(260px, 0.75fr);

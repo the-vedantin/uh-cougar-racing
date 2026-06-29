@@ -45,7 +45,6 @@
       '        </div>',
       '        <aside class="cr-model" aria-label="Interactive 3D car model">',
       '          <div class="cr-model-frame" id="cr-responsive-model-frame"></div>',
-      '          <p class="cr-model-caption">Samantha : 2025-2026 ICE Car</p>',
       '        </aside>',
       '      </div>',
       '    </div>',
@@ -91,7 +90,7 @@
     var frame = document.getElementById('cr-responsive-model-frame');
     if (!frame) return;
     var iframe = document.createElement('iframe');
-    iframe.title = 'Samantha 2025-2026 ICE Car 3D model';
+    iframe.title = 'Interactive Cougar Racing 3D car model';
     iframe.loading = 'lazy';
     iframe.src = 'car-model.html?v=responsive-home-1';
     frame.appendChild(iframe);
