@@ -51,6 +51,18 @@
     }
   }
 
+  function setLinkLabel(link, label) {
+    var candidates = link.querySelectorAll ? link.querySelectorAll('span, p, div') : [];
+    for (var i = candidates.length - 1; i >= 0; i -= 1) {
+      var text = linkText(candidates[i]);
+      if (text === 'join us' || text === 'linktree') {
+        candidates[i].textContent = label;
+        return;
+      }
+    }
+    link.textContent = label;
+  }
+
   function ensureLinktreeNav() {
     var navs = document.querySelectorAll('nav');
     for (var i = 0; i < navs.length; i += 1) {
@@ -77,13 +89,13 @@
         var link = item.querySelector('a');
         stripIds(item);
         if (!link) continue;
-        link.textContent = 'Linktree';
+        setLinkLabel(link, 'Linktree');
         setLinktreeLink(link);
         joinItem.parentNode.insertBefore(item, joinItem);
       } else {
-        var link = joinLink.cloneNode(false);
+        var link = joinLink.cloneNode(true);
         stripIds(link);
-        link.textContent = 'Linktree';
+        setLinkLabel(link, 'Linktree');
         setLinktreeLink(link);
         joinLink.parentNode.insertBefore(link, joinLink);
       }
