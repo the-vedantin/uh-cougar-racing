@@ -11,6 +11,7 @@ This keeps the published Wix-rendered layout and CDN media so the visual output 
 - `sponsors.html`
 - `news.html`
 - `inquiry-services-page.html`
+- `linktree.html`
 
 ## Notes
 

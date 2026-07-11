@@ -4,6 +4,7 @@
   var CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzExefPs2Ab1MCmXSIcB3XBKVDtepljINRh1Xd7d13MySmME9bL5nn5dI05PyIIur9Oqw/exec';
   var CONTACT_IFRAME = 'uhcr-contact-target';
   var JOIN_URL = 'https://checkout.square.site/merchant/6JR8Q2ZJ112HV/checkout/JTEPKQCKJ5I5P442GVGLZPKZ';
+  var LINKTREE_URL = 'linktree.html';
 
   function linkText(link) {
     return (link.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -22,10 +23,71 @@
     return linkText(link) === 'join us';
   }
 
+  function isLinktreeLink(link) {
+    var text = linkText(link);
+    var href = (link.getAttribute('href') || '').toLowerCase();
+    return text === 'linktree' || /(^|\/)linktree\.html($|[?#])/.test(href);
+  }
+
   function setJoinLink(link) {
     link.setAttribute('href', JOIN_URL);
     link.setAttribute('target', '_blank');
     link.setAttribute('rel', 'noreferrer noopener');
+  }
+
+  function setLinktreeLink(link) {
+    link.setAttribute('href', LINKTREE_URL);
+    link.setAttribute('target', '_self');
+    link.removeAttribute('rel');
+  }
+
+  function ensureLinktreeStyles() {
+    if (document.getElementById('uhcr-linktree-nav-style')) return;
+    var style = document.createElement('style');
+    style.id = 'uhcr-linktree-nav-style';
+    style.textContent = [
+      '.uhcr-linktree-nav{color:#fffffe!important;-webkit-text-fill-color:#fffffe!important;text-decoration:none!important;font:700 16px/1.2 Arial,Helvetica,sans-serif!important;display:inline-flex;align-items:center;white-space:nowrap;}',
+      '.uhcr-linktree-nav:hover,.uhcr-linktree-nav:focus-visible{text-decoration:underline!important;outline:none;}'
+    ].join('');
+    document.head.appendChild(style);
+  }
+
+  function ensureLinktreeNav() {
+    ensureLinktreeStyles();
+    var navs = document.querySelectorAll('nav');
+    for (var i = 0; i < navs.length; i += 1) {
+      var nav = navs[i];
+      var links = nav.querySelectorAll('a');
+      var hasLinktree = false;
+      var joinLink = null;
+
+      for (var j = 0; j < links.length; j += 1) {
+        if (isLinktreeLink(links[j])) {
+          hasLinktree = true;
+          setLinktreeLink(links[j]);
+        }
+        if (isJoinLink(links[j])) {
+          joinLink = links[j];
+        }
+      }
+
+      if (hasLinktree || !joinLink) continue;
+
+      var link = document.createElement('a');
+      link.className = 'uhcr-linktree-nav';
+      link.textContent = 'Linktree';
+      setLinktreeLink(link);
+
+      var joinItem = joinLink.closest ? joinLink.closest('li') : null;
+      if (joinItem && joinItem.parentNode) {
+        var item = document.createElement('li');
+        item.className = joinItem.className;
+        item.appendChild(link);
+        joinItem.parentNode.insertBefore(item, joinItem);
+      } else {
+        joinLink.parentNode.insertBefore(link, joinLink);
+      }
+    }
   }
 
   function fixLinks() {
@@ -37,7 +99,11 @@
       if (isJoinLink(links[i])) {
         setJoinLink(links[i]);
       }
+      if (isLinktreeLink(links[i])) {
+        setLinktreeLink(links[i]);
+      }
     }
+    ensureLinktreeNav();
   }
 
   function isHomePage() {
@@ -244,6 +310,9 @@
     }
     if (link && isJoinLink(link)) {
       setJoinLink(link);
+    }
+    if (link && isLinktreeLink(link)) {
+      setLinktreeLink(link);
     }
   }, true);
 
