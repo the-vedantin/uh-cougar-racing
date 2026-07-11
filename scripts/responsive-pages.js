@@ -11,7 +11,7 @@
     ['Contact', 'index.html#contact'],
     ['Sponsors', 'sponsors.html'],
     ['Legacy', 'news.html'],
-    ['Linktree', 'linktree.html'],
+    ['Linktree', 'https://linktr.ee/uhcougarracing'],
     ['Join Us', 'https://checkout.square.site/merchant/6JR8Q2ZJ112HV/checkout/JTEPKQCKJ5I5P442GVGLZPKZ']
   ];
 

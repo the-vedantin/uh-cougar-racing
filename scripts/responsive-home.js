@@ -14,7 +14,7 @@
       '      <a href="index.html#contact">Contact</a>',
       '      <a href="sponsors.html">Sponsors</a>',
       '      <a href="news.html">Legacy</a>',
-      '      <a href="linktree.html">Linktree</a>',
+      '      <a href="https://linktr.ee/uhcougarracing" target="_blank" rel="noreferrer noopener">Linktree</a>',
       '      <a href="https://checkout.square.site/merchant/6JR8Q2ZJ112HV/checkout/JTEPKQCKJ5I5P442GVGLZPKZ" target="_blank" rel="noreferrer noopener">Join Us</a>',
       '    </nav>',
       '  </header>',
