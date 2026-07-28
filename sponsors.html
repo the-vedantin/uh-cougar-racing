@@ -462,7 +462,18 @@ body { --wix-ads-height: 0px !important; }
 }
 @media (max-width: 900px) {
   #codex-sponsors-static .codex-sponsors-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 560px;
+  }
+
+  #codex-sponsors-static .codex-sponsor-tile {
+    min-height: 124px;
+    padding: 18px 22px;
+  }
+
+  #codex-sponsors-static .codex-sponsor-tile img {
+    max-height: 88px;
   }
 }
 @media (max-width: 560px) {
@@ -474,7 +485,7 @@ body { --wix-ads-height: 0px !important; }
   }
   #codex-sponsors-static .codex-sponsors-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 14px;
   }
 }
 @media (min-width: 1101px) {
@@ -504,7 +515,7 @@ body { --wix-ads-height: 0px !important; }
 }
 </style>
   <link rel="stylesheet" href="styles/responsive-fixes.css?v=mobile-stack-2">
-  <link rel="stylesheet" href="styles/responsive-pages.css?v=responsive-pages-2">
+  <link rel="stylesheet" href="styles/responsive-pages.css?v=responsive-pages-3">
   <script defer src="scripts/site-links.js?v=linktree-external-2"></script>
   <script defer src="scripts/responsive-fixes.js?v=mobile-stack-2"></script>
   <script defer src="scripts/responsive-pages.js?v=linktree-external-1"></script>

@@ -195,28 +195,28 @@
 
   .crp-sponsor-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(172px, 1fr));
     gap: 16px;
     align-items: center;
   }
 
   .crp-sponsor-heading {
-    margin-top: 34px !important;
+    margin-top: 28px !important;
   }
 
   .crp-sponsor {
-    min-height: 108px;
+    min-height: clamp(96px, 13vw, 126px);
     display: grid;
     place-items: center;
     padding: 16px;
     border: 1px solid rgba(255, 255, 254, 0.22);
     border-radius: 6px;
-    background: #050505;
+    background: #fffffe;
   }
 
   .crp-sponsor img {
     max-width: 100%;
-    max-height: 78px;
+    max-height: 84px;
     width: auto;
     height: auto;
     display: block;
@@ -276,6 +276,31 @@
   .crp-footer {
     padding-block: 34px;
     border-top: 1px solid rgba(255, 255, 254, 0.28);
+  }
+
+  @media (max-width: 900px) {
+    .crp-sponsors-section {
+      padding-block: 30px 34px;
+    }
+
+    .crp-sponsor-heading {
+      margin-top: 24px !important;
+    }
+
+    .crp-sponsor-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .crp-sponsor {
+      min-height: 104px;
+      padding: 14px 18px;
+    }
+
+    .crp-sponsor img {
+      max-width: 92%;
+      max-height: 74px;
+    }
   }
 
   @media (max-width: 700px) {
