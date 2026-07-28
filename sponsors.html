@@ -468,12 +468,33 @@ body { --wix-ads-height: 0px !important; }
   }
 
   #codex-sponsors-static .codex-sponsor-tile {
-    min-height: 124px;
+    min-height: 148px;
     padding: 18px 22px;
   }
 
   #codex-sponsors-static .codex-sponsor-tile img {
-    max-height: 88px;
+    max-height: 78px;
+  }
+
+  #codex-sponsors-static .codex-sponsor-tile img[src$="sponsor-gene-haas-foundation.png"] {
+    max-width: 52%;
+    max-height: 124px;
+  }
+
+  #codex-sponsors-static .codex-sponsor-tile img[src$="sponsor-blue-ox.png"],
+  #codex-sponsors-static .codex-sponsor-tile img[src$="sponsor-bend-it.png"] {
+    max-width: 62%;
+    max-height: 116px;
+  }
+
+  #codex-sponsors-static .codex-sponsor-tile img[src$="sponsor-baker-hughes.png"],
+  #codex-sponsors-static .codex-sponsor-tile img[src$="sponsor-kratz-coffee.png"],
+  #codex-sponsors-static .codex-sponsor-tile img[src$="sponsor-goengineer.png"],
+  #codex-sponsors-static .codex-sponsor-tile img[src$="sponsor-ironrod-steel.png"],
+  #codex-sponsors-static .codex-sponsor-tile img[src$="sponsor-katy-hydraulics.png"],
+  #codex-sponsors-static .codex-sponsor-tile img[src$="sponsor-rush-auto-works.png"] {
+    max-width: 82%;
+    max-height: 98px;
   }
 }
 @media (max-width: 560px) {
@@ -515,7 +536,7 @@ body { --wix-ads-height: 0px !important; }
 }
 </style>
   <link rel="stylesheet" href="styles/responsive-fixes.css?v=mobile-stack-2">
-  <link rel="stylesheet" href="styles/responsive-pages.css?v=responsive-pages-3">
+  <link rel="stylesheet" href="styles/responsive-pages.css?v=responsive-pages-4">
   <script defer src="scripts/site-links.js?v=linktree-external-2"></script>
   <script defer src="scripts/responsive-fixes.js?v=mobile-stack-2"></script>
   <script defer src="scripts/responsive-pages.js?v=linktree-external-1"></script>

@@ -293,13 +293,34 @@
     }
 
     .crp-sponsor {
-      min-height: 104px;
-      padding: 14px 18px;
+      min-height: 148px;
+      padding: 16px 20px;
     }
 
     .crp-sponsor img {
       max-width: 92%;
-      max-height: 74px;
+      max-height: 78px;
+    }
+
+    .crp-sponsor img[src$="sponsor-gene-haas-foundation.png"] {
+      max-width: 52%;
+      max-height: 124px;
+    }
+
+    .crp-sponsor img[src$="sponsor-blue-ox.png"],
+    .crp-sponsor img[src$="sponsor-bend-it.png"] {
+      max-width: 62%;
+      max-height: 116px;
+    }
+
+    .crp-sponsor img[src$="sponsor-baker-hughes.png"],
+    .crp-sponsor img[src$="sponsor-kratz-coffee.png"],
+    .crp-sponsor img[src$="sponsor-goengineer.png"],
+    .crp-sponsor img[src$="sponsor-ironrod-steel.png"],
+    .crp-sponsor img[src$="sponsor-katy-hydraulics.png"],
+    .crp-sponsor img[src$="sponsor-rush-auto-works.png"] {
+      max-width: 82%;
+      max-height: 98px;
     }
   }
 
