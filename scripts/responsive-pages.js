@@ -23,7 +23,7 @@
     ['GoEngineer', 'media/sponsor-goengineer.png'],
     ['AmeriTex Machine and Fabrication', 'media/sponsor-ameritex.png'],
     ['Baker Hughes', 'media/sponsor-baker-hughes.png'],
-    ['SpeedSportz Racing Park', 'media/sponsor-speedsportz.png'],
+    ['MSR Houston Motor Speedway Resort', 'media/sponsor-msr-houston.png'],
     ['Salcedo Engineering, L.L.C.', 'media/sponsor-salcedo-engineering.png'],
     ['Bend-It', 'media/sponsor-bend-it.png'],
     ['Rush Auto Works', 'media/sponsor-rush-auto-works.png'],
