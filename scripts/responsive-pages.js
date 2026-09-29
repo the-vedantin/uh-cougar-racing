@@ -16,6 +16,7 @@
   ];
 
   var sponsorLogos = [
+    ['CTG', 'media/sponsor-ctg.png'],
     ['Kratz Coffee', 'media/sponsor-kratz-coffee.png'],
     ['Fluor', 'media/sponsor-fluor.png'],
     ['Gene Haas Foundation', 'media/sponsor-gene-haas-foundation.png'],
@@ -29,7 +30,9 @@
     ['Rush Auto Works', 'media/sponsor-rush-auto-works.png'],
     ['Blue Ox', 'media/sponsor-blue-ox.png'],
     ['Katy Hydraulics', 'media/sponsor-katy-hydraulics.png'],
-    ['Ironrod Steel Co.', 'media/sponsor-ironrod-steel.png']
+    ['Ironrod Steel Co.', 'media/sponsor-ironrod-steel.png'],
+    ['GK Engineers', 'media/sponsor-gk-engineers.png'],
+    ['Kenesto', 'media/sponsor-kenesto.png']
   ];
 
   var subteams = [
